@@ -62,4 +62,16 @@ def order_history(request):
     orders = Order.objects.filter(user=request.user).order_by('-ordered_at')
     return render(request, 'store/order_history.html', {'orders': orders})
 
+from .models import Product, Category
+
+def home(request):
+    products = Product.objects.all()
+    categories = Category.objects.all()
+    return render(request, 'store/home.html', {
+        'products': products,
+        'categories': categories,
+    })
+
+
+
 

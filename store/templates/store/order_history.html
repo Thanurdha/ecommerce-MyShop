@@ -1,0 +1,18 @@
+{% extends 'store/base.html' %}
+{% block content %}
+  <div class="container">
+    <h2>Order History</h2>
+    {% if orders %}
+      <ul class="list-group">
+        {% for order in orders %}
+          <li class="list-group-item">
+            <strong>{{ order.product.name }}</strong> (Qty: {{ order.quantity }})<br>
+            Ordered on: {{ order.ordered_at|date:"M d, Y H:i" }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>You have no previous orders.</p>
+    {% endif %}
+  </div>
+{% endblock %}

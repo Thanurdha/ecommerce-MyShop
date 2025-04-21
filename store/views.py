@@ -22,8 +22,12 @@ def add_to_cart(request, product_id):
         cart_item.save()
     return redirect('view_cart')
 @login_required
-def view_cart(request):
+def checkout(request):
     cart_items = CartItem.objects.filter(user=request.user)
     total = sum(item.subtotal() for item in cart_items)
-    return render(request, 'store/cart.html', {'cart_items': cart_items, 'total': total})
+    return render(request, 'store/checkout.html', {'cart_items': cart_items, 'total': total})
+
+def thank_you(request):
+    return render(request, 'store/thankyou.html')
+
 

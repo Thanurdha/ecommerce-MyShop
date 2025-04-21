@@ -1,0 +1,15 @@
+{% extends 'store/base.html' %}
+{% block content %}
+  <h2>Checkout</h2>
+  <p class="lead">Please review your order:</p>
+  <ul class="list-group mb-4">
+    {% for item in cart_items %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ item.product.name }} × {{ item.quantity }}
+        <span>Rs. {{ item.subtotal }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+  <h4>Total: Rs. {{ total }}</h4>
+  <a href="{% url 'thank_you' %}" class="btn btn-primary">Confirm Order</a>
+{% endblock %}

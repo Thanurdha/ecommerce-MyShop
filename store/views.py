@@ -28,4 +28,17 @@ def view_cart(request):
     total = sum(item.subtotal() for item in cart_items)
     return render(request, 'store/cart.html', {'cart_items': cart_items, 'total': total})
 
+from django.contrib.auth.decorators import login_required
+from .models import CartItem
+
+@login_required
+def checkout(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    total = sum(item.subtotal() for item in cart_items)
+    return render(request, 'store/checkout.html', {'cart_items': cart_items, 'total': total})
+
+@login_required
+def thank_you(request):
+    return render(request, 'store/thankyou.html')
+
 

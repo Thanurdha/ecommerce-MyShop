@@ -1,0 +1,74 @@
+{% extends "store/base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+      {% endif %}
+    </div>
+
+    <div class="col-md-6">
+      <h2>{{ product.name }}</h2>
+      <p class="text-muted">{{ product.description }}</p>
+      <h4>Rs. {{ product.price }}</h4>
+
+      <!-- Form for Size + Quantity + Actions -->
+      <form method="post" action="{% url 'buy_now' product.id %}">
+        {% csrf_token %}
+
+        {% if size_options %}
+          <label class="form-label mt-3">Select Size:</label>
+          <select class="form-select mb-3" name="size" required>
+            {% for size in size_options %}
+              <option value="{{ size }}">{{ size }}</option>
+            {% endfor %}
+          </select>
+        {% endif %}
+
+        <label for="qty" class="form-label">Quantity:</label>
+        <input type="number" id="qty" name="qty" class="form-control w-25 mb-3" value="1" min="1" required>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2">
+          <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success btn-lg">Add to Cart</a>
+          <button type="submit" class="btn btn-danger btn-lg">Buy Now</button>
+        </div>
+      </form>
+
+      <hr>
+
+      <!-- ⭐ Review Section -->
+      <h5 class="mt-4">Submit Your Review</h5>
+      <form method="post">
+        {% csrf_token %}
+        <label for="rating">Rating:</label>
+        <select class="form-select w-25 mb-2" name="rating" required>
+          <option value="">Choose...</option>
+          {% for i in "12345" %}
+            <option value="{{ i }}">{{ i }} ★</option>
+          {% endfor %}
+        </select>
+
+        <label for="comment">Comment:</label>
+        <textarea name="comment" class="form-control mb-3" rows="3" placeholder="Write something..."></textarea>
+
+        <button type="submit" class="btn btn-outline-primary">Submit Review</button>
+      </form>
+
+      <!-- Existing Reviews -->
+      <hr>
+      <h5 class="mt-4">Customer Reviews</h5>
+      {% for review in reviews %}
+        <div class="border rounded p-3 mb-2">
+          <strong>{{ review.user.username }}</strong> - ⭐ {{ review.rating }}
+          <p class="mb-0">{{ review.comment }}</p>
+          <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+        </div>
+      {% empty %}
+        <p>No reviews yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

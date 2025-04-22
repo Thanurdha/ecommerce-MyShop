@@ -24,11 +24,52 @@
 
 
 
+  <!-- Products -->
+  <div class="container mt-4">
+    <h1 class="mb-4">Our Products</h1>
+
+
+
+
+
 
 
 
 <!-- Category Sections with Products -->
+
+{% for category, products in categorized_products.items %}
+  <div id="cat{{ category.id }}" class="mt-5">
+    <h4 class="mb-3">{{ category.name }}</h4>
+    <div class="row">
+      {% for product in products %}
+        <div class="col-md-3 mb-4">
+          <div class="card">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 180px; object-fit: cover;">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+
+              <p class="card-text">{{ product.description|truncatewords:15 }}</p>
+              <p class="card-text fw-bold">Rs. {{ product.price }}</p>
+              <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success btn-sm">Add to Cart</a>
+
+              <p class="card-text small text-muted">{{ product.description|truncatewords:10 }}</p>
+              <p class="fw-bold">Rs. {{ product.price }}</p>
+              <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-outline-primary w-100">Add to Cart</a>
+
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endfor %}
+
+<div class="container mt-5">
+
   <div class="container mt-5">
+
   <h2 class="text-center mb-4">Shop by Category</h2>
   <div class="row justify-content-center">
     {% for category in categories %}

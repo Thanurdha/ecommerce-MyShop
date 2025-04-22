@@ -21,4 +21,3 @@ urlpatterns = [
     path('buy-now/<int:product_id>/', views.buy_now, name='buy_now'),
 
 ]
-

@@ -11,5 +11,6 @@
     {% endfor %}
   </ul>
   <h4>Total: Rs. {{ total }}</h4>
-  <a href="{% url 'thank_you' %}" class="btn btn-primary">Confirm Order</a>
+  <a href="{% url 'payment' %}" class="btn btn-primary">Proceed to Payment</a>
+
 {% endblock %}

@@ -1,28 +1,54 @@
-<!DOCTYPE html>
-<html>
-<head>
-    {% extends 'store/base.html' %}
+{% extends 'store/base.html' %}
 {% block content %}
-  <h2>Payment Page</h2>
-  <p>Total: Rs. {{ total }}</p>
+<div class="container mt-5">
+  <h2 class="mb-4">Payment Page</h2>
+
+  {% if buy_now %}
+    <div class="mb-4">
+      <h5>Product: {{ product.name }}</h5>
+      <p>Quantity: {{ quantity }}</p>
+      <p>Total: Rs. {{ total }}</p>
+    </div>
+  {% elif cart_items %}
+    <div class="mb-4">
+      <h5>Your Order Summary:</h5>
+      <ul class="list-group mb-2">
+        {% for item in cart_items %}
+          <li class="list-group-item d-flex justify-content-between">
+            {{ item.product.name }} × {{ item.quantity }}
+            <span>Rs. {{ item.subtotal }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+      <h5>Total: Rs. {{ total }}</h5>
+    </div>
+  {% endif %}
+
+  <!-- Fake payment form -->
   <form method="post">
     {% csrf_token %}
-    <label>Name on Card:</label><br>
-    <input type="text" name="cardname" required><br><br>
+    <div class="mb-3">
+      <label class="form-label">Name on Card:</label>
+      <input type="text" name="cardname" class="form-control" required>
+    </div>
 
-    <label>Card Number:</label><br>
-    <input type="text" name="cardnumber" required><br><br>
+    <div class="mb-3">
+      <label class="form-label">Card Number:</label>
+      <input type="text" name="cardnumber" class="form-control" required>
+    </div>
 
-    <label>Expiry:</label><br>
-    <input type="text" name="expiry" placeholder="MM/YY" required><br><br>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Expiry:</label>
+        <input type="text" name="expiry" class="form-control" placeholder="MM/YY" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">CVV:</label>
+        <input type="text" name="cvv" class="form-control" required>
+      </div>
+    </div>
 
-    <label>CVV:</label><br>
-    <input type="text" name="cvv" required><br><br>
-
-    <button type="submit" class="btn btn-success">Pay Now</button>
+    <button type="submit" class="btn btn-success w-100">Pay Now</button>
   </form>
+</div>
 {% endblock %}
-
-    </form>
-</body>
-</html>

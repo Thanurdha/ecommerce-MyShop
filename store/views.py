@@ -229,7 +229,7 @@ def payment_page(request):
 
         cart_items.delete()
         request.session['from_cart_checkout'] = True
-        return redirect('payment')
+        return redirect('thank_you')
 
     return render(request, 'store/payment.html', {
         'cart_items': cart_items,
@@ -275,8 +275,6 @@ def buy_now(request, product_id):
     if request.method == 'POST':
         quantity = int(request.POST.get('qty', 1))
         size = request.POST.get('size', None)  # if you're using sizes
-        # Do something with the product + quantity
-        # For example: create a temporary order and redirect to checkout
         request.session['buy_now_product_id'] = product.id
         request.session['buy_now_quantity'] = quantity
         request.session['buy_now_size'] = size

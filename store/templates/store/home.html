@@ -19,27 +19,74 @@
     </div>
   </nav>
 
+<<<<<<< HEAD
   <!-- Products -->
   <div class="container mt-4">
     <h1 class="mb-4">Our Products</h1>
+=======
+
+
+  <h2 class="mb-3">Browse by Category</h2>
+
+<!-- Dropdown Menu -->
+<div class="mb-4">
+  <select class="form-select w-50" onchange="location = this.value;">
+    <option selected disabled>Choose a category</option>
+    {% for category in categories %}
+      <option value="#cat{{ category.id }}">{{ category.name }}</option>
+    {% empty %}
+      <option disabled>No categories available</option>
+    {% endfor %}
+  </select>
+</div>
+
+<!-- Category Sections with Products -->
+{% for category, products in categorized_products.items %}
+  <div id="cat{{ category.id }}" class="mt-5">
+    <h4 class="mb-3">{{ category.name }}</h4>
+>>>>>>> dab06a43fb1d3b669d96f5c6bcf57ecc092222ab
     <div class="row">
       {% for product in products %}
-        <div class="col-md-4">
-          <div class="card mb-4 shadow-sm">
+        <div class="col-md-3 mb-4">
+          <div class="card">
             {% if product.image %}
-              <img src="{{ product.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+              <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 180px; object-fit: cover;">
             {% endif %}
             <div class="card-body">
               <h5 class="card-title">{{ product.name }}</h5>
+<<<<<<< HEAD
               <p class="card-text">{{ product.description|truncatewords:15 }}</p>
               <p class="card-text fw-bold">Rs. {{ product.price }}</p>
               <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success btn-sm">Add to Cart</a>
+=======
+              <p class="card-text small text-muted">{{ product.description|truncatewords:10 }}</p>
+              <p class="fw-bold">Rs. {{ product.price }}</p>
+              <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-outline-primary w-100">Add to Cart</a>
+>>>>>>> dab06a43fb1d3b669d96f5c6bcf57ecc092222ab
             </div>
           </div>
         </div>
       {% endfor %}
     </div>
   </div>
+{% endfor %}
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Shop by Category</h2>
+  <div class="row justify-content-center">
+    {% for category in categories %}
+      <div class="col-md-3 mb-4">
+        <a href="{% url 'category_products' category.id %}" class="text-decoration-none">
+          <div class="card shadow-sm h-100 text-center bg-light border-0">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center" style="height: 150px;">
+              <h5 class="card-title text-dark">{{ category.name }}</h5>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
 
   <!-- About Us Section -->
   <div class="container mt-5 mb-4 border-top pt-4">

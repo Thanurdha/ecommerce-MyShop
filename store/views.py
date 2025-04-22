@@ -40,5 +40,3 @@ def checkout(request):
 @login_required
 def thank_you(request):
     return render(request, 'store/thankyou.html')
-
-

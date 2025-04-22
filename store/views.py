@@ -40,3 +40,37 @@ def checkout(request):
 @login_required
 def thank_you(request):
     return render(request, 'store/thankyou.html')
+
+from .models import Order, CartItem
+
+@login_required
+def checkout(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    if request.method == 'POST':
+        for item in cart_items:
+            Order.objects.create(
+                user=request.user,
+                product=item.product,
+                quantity=item.quantity
+            )
+        cart_items.delete()
+        return redirect('thank_you')
+    return render(request, 'store/checkout.html', {'cart_items': cart_items})
+
+@login_required
+def order_history(request):
+    orders = Order.objects.filter(user=request.user).order_by('-ordered_at')
+    return render(request, 'store/order_history.html', {'orders': orders})
+
+from .models import Product, Category
+
+def home(request):
+    products = Product.objects.all()
+    categories = Category.objects.all()
+    return render(request, 'store/home.html', {
+        'products': products,
+        'categories': categories,
+    })
+
+
+

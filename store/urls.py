@@ -10,5 +10,6 @@ urlpatterns = [
     path('thank-you/', views.thank_you, name='thank_you'),
     path('login/', auth_views.LoginView.as_view(template_name='store/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
+    path('orders/', views.order_history, name='order_history'),
 ]
 

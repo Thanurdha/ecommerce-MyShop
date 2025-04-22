@@ -93,7 +93,6 @@ def checkout(request):
     cart_items = CartItem.objects.filter(user=request.user)
     total = sum(item.subtotal() for item in cart_items)
 
-<<<<<<< HEAD
 @login_required
 def thank_you(request):
     return render(request, 'store/thankyou.html')
@@ -104,8 +103,6 @@ from .models import Order, CartItem
 @login_required
 def checkout(request):
     cart_items = CartItem.objects.filter(user=request.user)
-=======
->>>>>>> cc23a06da6f04684da59efc7dbbf415e36726405
     if request.method == 'POST':
         for item in cart_items:
             Order.objects.create(
@@ -259,8 +256,6 @@ def search_products(request):
     })
 
 
-<<<<<<< HEAD
-=======
 
 from django.shortcuts import render
 
@@ -269,7 +264,6 @@ def product_detail(request, product_id):
     return render(request, 'store/product_detail.html', {'product': product})
 
 #Buy now
->>>>>>> cc23a06da6f04684da59efc7dbbf415e36726405
 @login_required
 def buy_now(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -282,7 +276,6 @@ def buy_now(request, product_id):
         return redirect('checkout')
 
 
-<<<<<<< HEAD
 def about(request):
     return render(request, 'store/about.html')
 from django.shortcuts import render, redirect
@@ -305,6 +298,3 @@ def signup_view(request):
         form = UserCreationForm()
 
     return render(request, 'store/signup.html', {'form': form})
-
-=======
->>>>>>> cc23a06da6f04684da59efc7dbbf415e36726405

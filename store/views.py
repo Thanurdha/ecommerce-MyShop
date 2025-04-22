@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Product, Category, CartItem, Order
+from django.contrib import messages
 
 # Home page
 def home(request):
@@ -56,7 +57,9 @@ def add_to_cart(request, product_id):
     if not created:
         cart_item.quantity += 1
         cart_item.save()
-    return redirect('view_cart')
+
+    messages.success(request, f"✅ {product.name} added to your cart!")  # ✅ success message
+    return redirect(request.META.get('HTTP_REFERER', 'home'))  # redirect back instead of cart
 
 # View cart
 @login_required

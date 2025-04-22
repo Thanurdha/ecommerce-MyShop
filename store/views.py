@@ -70,7 +70,17 @@ def checkout(request):
 # Thank you page
 @login_required
 def thank_you(request):
-    return render(request, 'store/thankyou.html')
+    order_summary = request.session.get('order_summary', [])
+    total = request.session.get('order_total', 0)
+
+    # Optionally clear session data after showing once
+    request.session.pop('order_summary', None)
+    request.session.pop('order_total', None)
+
+    return render(request, 'store/thankyou.html', {
+        'cart_items': order_summary,
+        'total': total
+    })
 
 # Order history
 @login_required
@@ -83,6 +93,42 @@ def order_history(request):
 # About page
 def about(request):
     return render(request, 'store/about.html')
+
+
+# Payment page
+@login_required
+def payment_page(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    total = sum(item.subtotal() for item in cart_items)
+
+    if request.method == 'POST':
+        # Move cart items to Order model
+        for item in cart_items:
+            Order.objects.create(
+                user=request.user,
+                product=item.product,
+                quantity=item.quantity
+            )
+
+        # Save cart data in session to show in thank you
+        request.session['order_summary'] = [
+            {
+                'name': item.product.name,
+                'quantity': item.quantity,
+                'subtotal': float(item.subtotal())
+            } for item in cart_items
+        ]
+        request.session['order_total'] = float(total)
+
+        # Clear cart
+        cart_items.delete()
+
+        return redirect('thank_you')
+
+    return render(request, 'store/payment.html', {
+        'cart_items': cart_items,
+        'total': total
+    })
 
 
 def todays_deals(request):
@@ -100,3 +146,4 @@ def home(request):
         'categories': categories,
         'deals': deals,
     })
+

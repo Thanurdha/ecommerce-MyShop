@@ -244,7 +244,7 @@ def search_products(request):
         'query': query,
         'results': results,
     })
-<<<<<<< HEAD
+
 
 
 from django.shortcuts import render
@@ -252,7 +252,7 @@ from django.shortcuts import render
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     return render(request, 'store/product_detail.html', {'product': product})
-=======
+
 #Buy now
 @login_required
 def buy_now(request, product_id):
@@ -268,4 +268,3 @@ def buy_now(request, product_id):
         return redirect('checkout')
 
 
->>>>>>> 67210f62c4dbf809071e955256ba441e7f8afe88

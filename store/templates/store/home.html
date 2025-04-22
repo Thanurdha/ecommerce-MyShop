@@ -9,28 +9,23 @@
 
 </head>
 <body>
-  <a href="{% url 'view_cart' %}" class="btn btn-outline-light ms-2">🛒 View Cart</a>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+
+  <!-- Top Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">MyShop</a>
+      <div class="navbar-nav ms-auto">
+          <a class="nav-link text-white me-3" href="{% url 'home' %}">Home</a>
+          <a class="nav-link text-white" href="{% url 'view_cart' %}">Cart</a>
+
+      </div>
     </div>
   </nav>
 
 
 
-  <h2 class="mb-3">Browse by Category</h2>
 
-<!-- Dropdown Menu -->
-<div class="mb-4">
-  <select class="form-select w-50" onchange="location = this.value;">
-    <option selected disabled>Choose a category</option>
-    {% for category in categories %}
-      <option value="#cat{{ category.id }}">{{ category.name }}</option>
-    {% empty %}
-      <option disabled>No categories available</option>
-    {% endfor %}
-  </select>
-</div>
+
 
 <!-- Category Sections with Products -->
   <div class="container mt-5">
@@ -65,6 +60,7 @@
 {% for category, products in categorized_products.items %}
   <div id="cat{{ category.id }}" class="mt-5">
     <h4 class="mb-3">{{ category.name }}</h4>
+
     <div class="row">
       {% for product in products %}
         <div class="col-md-3 mb-4">
@@ -74,9 +70,15 @@
             {% endif %}
             <div class="card-body">
               <h5 class="card-title">{{ product.name }}</h5>
+
+              <p class="card-text">{{ product.description|truncatewords:15 }}</p>
+              <p class="card-text fw-bold">Rs. {{ product.price }}</p>
+              <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success btn-sm">Add to Cart</a>
+
               <p class="card-text small text-muted">{{ product.description|truncatewords:10 }}</p>
               <p class="fw-bold">Rs. {{ product.price }}</p>
               <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-outline-primary w-100">Add to Cart</a>
+
             </div>
           </div>
         </div>
@@ -85,10 +87,35 @@
   </div>
 {% endfor %}
 
+
+
+  <!-- About Us Section -->
   <footer class="bg-dark text-white text-center p-3 mt-5">
+  <div class="container mt-5 mb-4 border-top pt-4">
+    <h2>About Us</h2>
+    <p>
+      Welcome to <strong>MyShop</strong>, your one-stop online destination for all your shopping needs.
+      Founded by a passionate team of students, our goal is to deliver a seamless, affordable, and
+      enjoyable shopping experience to everyone, everywhere.
+    </p>
+    <p>
+      Whether you're browsing the latest electronics, fashion, home essentials, or unique finds — we've
+      got it all. Every product is handpicked with quality and affordability in mind.
+    </p>
+    <ul style="list-style-type: none; padding-left: 0;">
+      <li>🛒 Wide selection of high-quality products</li>
+      <li>💸 Student-friendly prices</li>
+      <li>🚚 Reliable delivery</li>
+      <li>💬 Friendly support team</li>
+    </ul>
+    <p>Thank you for choosing MyShop — created by students, built for everyone.</p>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center p-3">
+
     &copy; 2025 MyShop. All rights reserved.
   </footer>
+
 </body>
 </html>
-
-

@@ -83,3 +83,20 @@ def order_history(request):
 # About page
 def about(request):
     return render(request, 'store/about.html')
+
+
+def todays_deals(request):
+    deal_products = Product.objects.filter(is_deal=True)
+    return render(request, 'store/todays_deals.html', {
+        'products': deal_products
+    })
+
+def home(request):
+    products = Product.objects.all()
+    categories = Category.objects.all()
+    deals = Product.objects.filter(is_deal=True)[:5]  # show top 5 deals
+    return render(request, 'store/home.html', {
+        'products': products,
+        'categories': categories,
+        'deals': deals,
+    })

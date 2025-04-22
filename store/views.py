@@ -24,30 +24,6 @@ def category_products(request, category_id):
         'products': products
     })
 
-#Product
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Product, Review
-from django.contrib.auth.decorators import login_required
-
-@login_required
-def product_detail(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    size_options = product.get_size_options()
-    reviews = product.reviews.all().order_by('-created_at')
-
-    if request.method == 'POST':
-        rating = int(request.POST.get('rating'))
-        comment = request.POST.get('comment')
-        Review.objects.create(product=product, user=request.user, rating=rating, comment=comment)
-        return redirect('product_detail', product_id=product.id)
-
-    return render(request, 'store/product_detail.html', {
-        'product': product,
-        'size_options': size_options,
-        'reviews': reviews,
-    })
-
-
 
 # Add to cart
 @login_required
@@ -268,6 +244,15 @@ def search_products(request):
         'query': query,
         'results': results,
     })
+
+
+
+from django.shortcuts import render
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, 'store/product_detail.html', {'product': product})
+
 #Buy now
 @login_required
 def buy_now(request, product_id):

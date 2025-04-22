@@ -7,17 +7,25 @@
       <div class="col-md-4 mb-4">
         <div class="card h-100">
           {% if product.image %}
-            <img src="{{ product.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+            <!-- Wrap image with link -->
+            <a href="{% url 'product_detail' product.id %}">
+              <img src="{{ product.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+            </a>
           {% endif %}
           <div class="card-body">
-            <h5 class="card-title mb-1">{{ product.name }}</h5>
-              {% if product.avg_rating %}
-                <p class="text-warning mb-2" style="font-size: 0.9rem;">
-                 ⭐ {{ product.avg_rating|floatformat:1 }}/5
-                </p>
-              {% else %}
-                <p class="text-muted" style="font-size: 0.9rem;">No ratings yet</p>
-              {% endif %}
+            <!-- Wrap product name with link -->
+            <a href="{% url 'product_detail' product.id %}" class="text-decoration-none text-dark">
+              <h5 class="card-title mb-1">{{ product.name }}</h5>
+            </a>
+
+            {% if product.avg_rating %}
+              <p class="text-warning mb-2" style="font-size: 0.9rem;">
+               ⭐ {{ product.avg_rating|floatformat:1 }}/5
+              </p>
+            {% else %}
+              <p class="text-muted" style="font-size: 0.9rem;">No ratings yet</p>
+            {% endif %}
+
             <p class="card-text">{{ product.description|truncatewords:10 }}</p>
             <p class="fw-bold">Rs. {{ product.price }}</p>
             <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-primary">Add to Cart</a>

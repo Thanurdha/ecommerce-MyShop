@@ -19,11 +19,12 @@
     </div>
   </nav>
 
-<<<<<<< HEAD
+
   <!-- Products -->
   <div class="container mt-4">
     <h1 class="mb-4">Our Products</h1>
-=======
+
+
 
 
   <h2 class="mb-3">Browse by Category</h2>
@@ -44,7 +45,6 @@
 {% for category, products in categorized_products.items %}
   <div id="cat{{ category.id }}" class="mt-5">
     <h4 class="mb-3">{{ category.name }}</h4>
->>>>>>> dab06a43fb1d3b669d96f5c6bcf57ecc092222ab
     <div class="row">
       {% for product in products %}
         <div class="col-md-3 mb-4">
@@ -54,15 +54,15 @@
             {% endif %}
             <div class="card-body">
               <h5 class="card-title">{{ product.name }}</h5>
-<<<<<<< HEAD
+
               <p class="card-text">{{ product.description|truncatewords:15 }}</p>
               <p class="card-text fw-bold">Rs. {{ product.price }}</p>
               <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success btn-sm">Add to Cart</a>
-=======
+
               <p class="card-text small text-muted">{{ product.description|truncatewords:10 }}</p>
               <p class="fw-bold">Rs. {{ product.price }}</p>
               <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-outline-primary w-100">Add to Cart</a>
->>>>>>> dab06a43fb1d3b669d96f5c6bcf57ecc092222ab
+
             </div>
           </div>
         </div>

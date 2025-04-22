@@ -72,6 +72,16 @@ def home(request):
         'categories': categories,
     })
 
+from .models import Product
+
+def category_products(request, category_id):
+    selected_category = Category.objects.get(id=category_id)
+    products = Product.objects.filter(category=selected_category)
+    return render(request, 'store/category_products.html', {
+        'category': selected_category,
+        'products': products
+    })
+
 
 
 

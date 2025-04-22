@@ -42,8 +42,6 @@ def thank_you(request):
     return render(request, 'store/thankyou.html')
 
 from .models import Order, CartItem
-<<<<<<< HEAD
-=======
 
 @login_required
 def checkout(request):
@@ -86,7 +84,7 @@ def category_products(request, category_id):
 
 
 
->>>>>>> dab06a43fb1d3b669d96f5c6bcf57ecc092222ab
+
 
 @login_required
 def checkout(request):

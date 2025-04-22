@@ -12,4 +12,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
     path('orders/', views.order_history, name='order_history'),
 
+    path('about/', views.about, name='about'),
+    path('category/<int:category_id>/', views.category_products, name='category_products'),
+
 ]

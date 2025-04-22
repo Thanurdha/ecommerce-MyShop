@@ -84,6 +84,8 @@ def category_products(request, category_id):
 
 
 
+
+
 @login_required
 def checkout(request):
     cart_items = CartItem.objects.filter(user=request.user)

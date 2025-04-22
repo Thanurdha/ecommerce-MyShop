@@ -1,10 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'store/base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h3>Search Results for: "{{ query }}"</h3>
+
+  {% if results %}
+    <div class="row">
+      {% for product in results %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">Rs. {{ product.price }}</p>
+              <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Add to Cart</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted mt-3">No products found matching your search.</p>
+  {% endif %}
+</div>
+{% endblock %}

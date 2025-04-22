@@ -12,13 +12,17 @@ def home(request):
     })
 
 # Products by category
+from django.db.models import Avg
+from .models import Product
+
 def category_products(request, category_id):
     selected_category = Category.objects.get(id=category_id)
-    products = Product.objects.filter(category=selected_category)
+    products = Product.objects.filter(category=selected_category).annotate(avg_rating=Avg('reviews__rating'))
     return render(request, 'store/category_products.html', {
         'category': selected_category,
         'products': products
     })
+
 
 # Add to cart
 @login_required
@@ -147,3 +151,15 @@ def home(request):
         'deals': deals,
     })
 
+from django.db.models import Q
+
+def search_products(request):
+    query = request.GET.get('q', '')
+    results = Product.objects.filter(
+        Q(name__icontains=query) | Q(category__name__icontains=query)
+    ) if query else []
+
+    return render(request, 'store/search_results.html', {
+        'query': query,
+        'results': results,
+    })

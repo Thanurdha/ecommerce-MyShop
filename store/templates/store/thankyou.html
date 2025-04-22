@@ -1,0 +1,28 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<div class="container d-flex flex-column align-items-center justify-content-center text-center mt-5">
+  <div class="bg-light shadow p-5 rounded" style="max-width: 600px;">
+    <div class="text-success display-4 mb-3">✔</div>
+    <h2 class="mb-3">Payment Successful!</h2>
+    <p class="lead">Thank you for your purchase. Your order has been received.</p>
+
+    <hr class="my-4">
+    <h5 class="mb-3">🧾 Order Summary</h5>
+
+    <ul class="list-group mb-3 text-start">
+      {% for item in cart_items %}
+        <li class="list-group-item d-flex justify-content-between">
+          {{ item.name }} × {{ item.quantity }}
+          <span>Rs. {{ item.subtotal }}</span>
+        </li>
+      {% endfor %}
+      <li class="list-group-item d-flex justify-content-between fw-bold">
+        Total:
+        <span>Rs. {{ total }}</span>
+      </li>
+    </ul>
+
+    <a href="{% url 'home' %}" class="btn btn-success mt-3">← Back to Home</a>
+  </div>
+</div>
+{% endblock %}

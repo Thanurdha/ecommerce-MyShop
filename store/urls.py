@@ -1,6 +1,9 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 from . import views
+from .views import signup_view
+from django.contrib.auth import views as auth_views
+from .views import signup_view
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -11,11 +14,12 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='store/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
     path('orders/', views.order_history, name='order_history'),
-<<<<<<< HEAD
     path('about/', views.about, name='about'),
-
-=======
     path('category/<int:category_id>/', views.category_products, name='category_products'),
->>>>>>> dab06a43fb1d3b669d96f5c6bcf57ecc092222ab
+    path('signup/', signup_view, name='signup'),
+    path('login/', auth_views.LoginView.as_view(template_name='store/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
+    path('signup/', signup_view, name='signup'),
 ]
+
 

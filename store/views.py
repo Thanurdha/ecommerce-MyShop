@@ -106,3 +106,24 @@ def order_history(request):
 
 def about(request):
     return render(request, 'store/about.html')
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.contrib import messages
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Auto-login after signup
+            messages.success(request, 'Account created successfully! You are now logged in.')
+            return redirect('home')  # Change to 'dashboard' or any other page if needed
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'store/signup.html', {'form': form})
+

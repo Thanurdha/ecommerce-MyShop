@@ -13,19 +13,28 @@
       <p class="text-muted">{{ product.description }}</p>
       <h4>Rs. {{ product.price }}</h4>
 
-      {% if size_options %}
-        <label class="form-label mt-3">Select Size:</label>
-        <select class="form-select mb-3" name="size">
-          {% for size in size_options %}
-            <option>{{ size }}</option>
-          {% endfor %}
-        </select>
-      {% endif %}
+      <!-- Form for Size + Quantity + Actions -->
+      <form method="post" action="{% url 'buy_now' product.id %}">
+        {% csrf_token %}
 
-      <label for="qty" class="form-label">Quantity:</label>
-      <input type="number" id="qty" name="qty" class="form-control w-25 mb-3" value="1" min="1">
+        {% if size_options %}
+          <label class="form-label mt-3">Select Size:</label>
+          <select class="form-select mb-3" name="size" required>
+            {% for size in size_options %}
+              <option value="{{ size }}">{{ size }}</option>
+            {% endfor %}
+          </select>
+        {% endif %}
 
-      <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success btn-lg">Add to Cart</a>
+        <label for="qty" class="form-label">Quantity:</label>
+        <input type="number" id="qty" name="qty" class="form-control w-25 mb-3" value="1" min="1" required>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2">
+          <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success btn-lg">Add to Cart</a>
+          <button type="submit" class="btn btn-danger btn-lg">Buy Now</button>
+        </div>
+      </form>
 
       <hr>
 

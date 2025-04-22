@@ -29,22 +29,22 @@
     {% csrf_token %}
     <div class="mb-3">
       <label class="form-label">Name on Card:</label>
-      <input type="text" name="cardname" class="form-control" required>
+      <input type="text" name="cardname" class="form-control" required pattern="[A-Za-z ]+" title="Only letters and spaces">
     </div>
 
     <div class="mb-3">
       <label class="form-label">Card Number:</label>
-      <input type="text" name="cardnumber" class="form-control" required>
+      <input type="text" name="cardnumber" class="form-control" pattern="\d{16}" maxlength="16" title="Enter exactly 16 digits">
     </div>
 
     <div class="row">
       <div class="col-md-6 mb-3">
         <label class="form-label">Expiry:</label>
-        <input type="text" name="expiry" class="form-control" placeholder="MM/YY" required>
+        <input type="text" name="expiry" class="form-control" placeholder="MM/YY" required pattern="(0[1-9]|1[0-2])\/\d{2}" title="Enter in MM/YY format">
       </div>
       <div class="col-md-6 mb-3">
         <label class="form-label">CVV:</label>
-        <input type="text" name="cvv" class="form-control" required>
+        <input type="text" name="cvv" class="form-control" required pattern="\d{3}" maxlength="3" title="Enter 3-digit CVV">
       </div>
     </div>
 

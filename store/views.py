@@ -42,6 +42,8 @@ def thank_you(request):
     return render(request, 'store/thankyou.html')
 
 from .models import Order, CartItem
+<<<<<<< HEAD
+=======
 
 @login_required
 def checkout(request):
@@ -84,4 +86,27 @@ def category_products(request, category_id):
 
 
 
+>>>>>>> dab06a43fb1d3b669d96f5c6bcf57ecc092222ab
 
+@login_required
+def checkout(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    if request.method == 'POST':
+        for item in cart_items:
+            Order.objects.create(
+                user=request.user,
+                product=item.product,
+                quantity=item.quantity
+            )
+        cart_items.delete()
+        return redirect('thank_you')
+    return render(request, 'store/checkout.html', {'cart_items': cart_items})
+
+@login_required
+def order_history(request):
+    orders = Order.objects.filter(user=request.user).order_by('-ordered_at')
+    return render(request, 'store/order_history.html', {'orders': orders})
+
+
+def about(request):
+    return render(request, 'store/about.html')

@@ -1,0 +1,48 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="signup-background">
+  <!-- Floating Icons -->
+  <i class="fas fa-shopping-bag icon icon1"></i>
+  <i class="fas fa-cart-shopping icon icon2"></i>
+  <i class="fas fa-store icon icon3"></i>
+  <i class="fas fa-tags icon icon4"></i>
+  <i class="fas fa-user icon icon5"></i>
+  <i class="fas fa-lock icon icon6"></i>
+
+  <!-- Signup Card -->
+  <div class="auth-box">
+    <h2 class="text-center mb-4">Create an Account</h2>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <div class="form-text text-muted">{{ field.help_text }}</div>
+          {% endif %}
+          {% for error in field.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+    </form>
+    <p class="text-center mt-3">
+      Already have an account? <a href="{% url 'login' %}">Log in here</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

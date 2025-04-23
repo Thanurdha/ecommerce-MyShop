@@ -39,21 +39,6 @@
   </div>
 </div>
 
-<!-- Browse by Category Dropdown -->
-<div class="container">
-  <h2 class="mb-3">Browse by Category</h2>
-  <div class="mb-4">
-    <select class="form-select w-50" onchange="location = this.value;">
-      <option selected disabled>Choose a category</option>
-      {% for category in categories %}
-        <option value="#cat{{ category.id }}">{{ category.name }}</option>
-      {% empty %}
-        <option disabled>No categories available</option>
-      {% endfor %}
-    </select>
-  </div>
-</div>
-
 <!-- Category Sections with Products -->
 <div class="container mt-4">
   <h2 class="mb-4">Our Products</h2>

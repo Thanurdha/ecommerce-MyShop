@@ -55,7 +55,6 @@ def remove_from_cart(request, product_id):
         cart_item.delete()
     return redirect('view_cart')
 
-#checkout page
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product, CartItem, Order
 from django.contrib.auth.decorators import login_required
@@ -71,13 +70,11 @@ def checkout(request):
         total = product.price * int(buy_now_quantity)
 
         if request.method == 'POST':
-            # Create a single order directly
             Order.objects.create(
                 user=request.user,
                 product=product,
                 quantity=buy_now_quantity
             )
-            # Clear session after placing order
             del request.session['buy_now_product_id']
             del request.session['buy_now_quantity']
             return redirect('payment')
@@ -89,9 +86,26 @@ def checkout(request):
             'total': total
         })
 
-    # 🛒 If it's a regular cart checkout
+    # 🛒 Regular cart checkout
     cart_items = CartItem.objects.filter(user=request.user)
     total = sum(item.subtotal() for item in cart_items)
+
+    if request.method == 'POST':
+        for item in cart_items:
+            Order.objects.create(
+                user=request.user,
+                product=item.product,
+                quantity=item.quantity
+            )
+        cart_items.delete()
+        return redirect('payment')
+
+    return render(request, 'store/checkout.html', {
+        'buy_now': False,
+        'cart_items': cart_items,
+        'total': total
+    })
+
 
 @login_required
 def thank_you(request):
@@ -103,6 +117,7 @@ from .models import Order, CartItem
 @login_required
 def checkout(request):
     cart_items = CartItem.objects.filter(user=request.user)
+    total = sum(item.subtotal() for item in cart_items)
     if request.method == 'POST':
         for item in cart_items:
             Order.objects.create(
@@ -193,6 +208,9 @@ def payment_page(request):
 
     # Else: Cart payment
     cart_items = CartItem.objects.filter(user=request.user)
+    if not cart_items:
+        return redirect('view_cart')  # ✅ Safeguard if no cart items
+
     total = sum(item.subtotal() for item in cart_items)
 
     if request.method == 'POST':
@@ -218,11 +236,10 @@ def payment_page(request):
         return redirect('thank_you')
 
     return render(request, 'store/payment.html', {
+        'buy_now': False,
         'cart_items': cart_items,
         'total': total
     })
-# Fallback
-    return redirect('view_cart')
 
 #deals
 def todays_deals(request):

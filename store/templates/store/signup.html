@@ -15,9 +15,9 @@
   <i class="fas fa-user icon icon5"></i>
   <i class="fas fa-lock icon icon6"></i>
 
-  <!-- Login Card -->
+  <!-- Signup Card -->
   <div class="auth-box">
-    <h2 class="text-center mb-4">Login</h2>
+    <h2 class="text-center mb-4">Create an Account</h2>
     <form method="post" novalidate>
       {% csrf_token %}
       {% for field in form %}
@@ -32,14 +32,16 @@
           {% endfor %}
         </div>
       {% endfor %}
-      <button type="submit" class="btn btn-primary w-100">Login</button>
+      <button type="submit" class="btn btn-primary w-100">Sign Up</button>
     </form>
     <p class="text-center mt-3">
-      Don’t have an account? <a href="{% url 'signup' %}">Sign up here</a>
+      Already have an account? <a href="{% url 'login' %}">Log in here</a>
     </p>
   </div>
 </div>
 {% endblock %}
+
+
 
 
 

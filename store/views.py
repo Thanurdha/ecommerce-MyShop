@@ -93,6 +93,16 @@ def checkout(request):
     cart_items = CartItem.objects.filter(user=request.user)
     total = sum(item.subtotal() for item in cart_items)
 
+@login_required
+def thank_you(request):
+    return render(request, 'store/thankyou.html')
+
+from .models import Order, CartItem
+
+
+@login_required
+def checkout(request):
+    cart_items = CartItem.objects.filter(user=request.user)
     if request.method == 'POST':
         for item in cart_items:
             Order.objects.create(
@@ -266,3 +276,25 @@ def buy_now(request, product_id):
         return redirect('checkout')
 
 
+def about(request):
+    return render(request, 'store/about.html')
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.contrib import messages
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Auto-login after signup
+            messages.success(request, 'Account created successfully! You are now logged in.')
+            return redirect('home')  # Change to 'dashboard' or any other page if needed
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'store/signup.html', {'form': form})

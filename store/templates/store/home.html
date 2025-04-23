@@ -1,4 +1,6 @@
 {% extends 'store/base.html' %}
+{% load static %}
+
 {% block content %}
 
 <!-- Today's Hot Deals Section -->
@@ -37,9 +39,24 @@
   </div>
 </div>
 
-<!-- Our Products -->
+<!-- Browse by Category Dropdown -->
+<div class="container">
+  <h2 class="mb-3">Browse by Category</h2>
+  <div class="mb-4">
+    <select class="form-select w-50" onchange="location = this.value;">
+      <option selected disabled>Choose a category</option>
+      {% for category in categories %}
+        <option value="#cat{{ category.id }}">{{ category.name }}</option>
+      {% empty %}
+        <option disabled>No categories available</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+<!-- Category Sections with Products -->
 <div class="container mt-4">
-  <h1 class="mb-4">Our Products</h1>
+  <h2 class="mb-4">Our Products</h2>
 
   {% for category, products in categorized_products.items %}
     <div id="cat{{ category.id }}" class="mt-5">
@@ -65,7 +82,7 @@
   {% endfor %}
 </div>
 
-<!-- Shop by Category -->
+<!-- Shop by Category Icons -->
 <div class="container mt-5">
   <h2 class="text-center mb-4">Shop by Category</h2>
   <div class="row justify-content-center">
@@ -94,5 +111,5 @@
   </div>
 </div>
 
-
 {% endblock %}
+

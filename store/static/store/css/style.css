@@ -1,0 +1,111 @@
+/* Background wrapper for login/signup */
+.signup-background {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom right, #f3ecff, #ffffff);
+  overflow: hidden;
+  padding: 2rem;
+}
+
+/* Floating icons */
+.icon {
+  position: absolute;
+  font-size: 100px;
+  color: rgba(85, 25, 130, 0.1); /* Darker purple */
+  z-index: 0;
+  animation: float 8s ease-in-out infinite;
+}
+
+.icon1 { top: 10%; left: 5%; }
+.icon2 { top: 25%; right: 10%; }
+.icon3 { bottom: 30%; left: 15%; }
+.icon4 { bottom: 5%; right: 8%; }
+.icon5 { top: 60%; left: 50%; }
+.icon6 { bottom: 50%; right: 40%; }
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0); }
+}
+
+/* Login/signup card styling */
+.auth-box {
+  background-color: #fff;
+  padding: 35px;
+  max-width: 450px;
+  width: 100%;
+  margin: auto;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  position: relative;
+}
+
+.auth-box h2 {
+  color: #55268c;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.auth-box form {
+  text-align: left;
+}
+
+.auth-box label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.auth-box .form-control {
+  margin-bottom: 15px;
+}
+
+.auth-box button {
+  font-weight: 500;
+  padding: 10px;
+  background-color: #55268c;
+  border: none;
+  color: white;
+}
+
+.auth-box button:hover {
+  background-color: #421f6c;
+}
+
+.auth-box p {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.95rem;
+}
+
+.auth-box a {
+  color: #55268c;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.auth-box a:hover {
+  text-decoration: underline;
+}
+
+/* Smaller navbar buttons */
+.navbar .btn {
+  font-size: 0.875rem;
+  padding: 5px 12px;
+}
+/* Elongate form input boxes on auth forms */
+.auth-box input[type="text"],
+.auth-box input[type="password"],
+.auth-box input[type="email"] {
+  height: 48px;
+  width: 100%;
+  font-size: 1rem;
+  padding: 10px 14px;
+  border-radius: 6px;
+}

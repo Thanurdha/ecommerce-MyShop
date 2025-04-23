@@ -40,21 +40,27 @@
 
       <!-- ⭐ Review Section -->
       <h5 class="mt-4">Submit Your Review</h5>
-      <form method="post">
-        {% csrf_token %}
-        <label for="rating">Rating:</label>
-        <select class="form-select w-25 mb-2" name="rating" required>
-          <option value="">Choose...</option>
-          {% for i in "12345" %}
-            <option value="{{ i }}">{{ i }} ★</option>
-          {% endfor %}
-        </select>
 
-        <label for="comment">Comment:</label>
-        <textarea name="comment" class="form-control mb-3" rows="3" placeholder="Write something..."></textarea>
+      {% if user.is_authenticated %}
+        <form method="post">
+          {% csrf_token %}
+          <label for="rating">Rating:</label>
+          <select class="form-select w-25 mb-2" name="rating" required>
+            <option value="">Choose...</option>
+            {% for i in "12345" %}
+              <option value="{{ i }}">{{ i }} ★</option>
+            {% endfor %}
+          </select>
 
-        <button type="submit" class="btn btn-outline-primary">Submit Review</button>
-      </form>
+          <label for="comment">Comment:</label>
+          <textarea name="comment" class="form-control mb-3" rows="3" placeholder="Write something..."></textarea>
+
+          <button type="submit" class="btn btn-outline-primary">Submit Review</button>
+        </form>
+      {% else %}
+        <p><a href="{% url 'login' %}">Log in</a> to write a review.</p>
+      {% endif %}
+
 
       <!-- Existing Reviews -->
       <hr>

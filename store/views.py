@@ -273,12 +273,39 @@ def search_products(request):
     })
 
 
-
+#product details
 from django.shortcuts import render
-
+from .models import Review
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    return render(request, 'store/product_detail.html', {'product': product})
+    reviews = product.reviews.all().order_by('-created_at')
+
+    # Determine size options based on category
+    size_options = []
+    if product.category.name.lower() == 'clothing':
+        size_options = ['S', 'M', 'L', 'XL']
+    elif product.category.name.lower() == 'shoes':
+        size_options = ['6', '7', '8', '9', '10', '11']
+
+    # Handle Review POST
+    if request.method == 'POST' and 'rating' in request.POST:
+        rating = int(request.POST.get('rating'))
+        comment = request.POST.get('comment', '')
+
+        # Save the review
+        Review.objects.create(
+            product=product,
+            user=request.user,
+            rating=rating,
+            comment=comment
+        )
+        return redirect('product_detail', product_id=product.id)  # redirect to avoid form resubmission
+
+    return render(request, 'store/product_detail.html', {
+        'product': product,
+        'reviews': reviews,
+        'size_options': size_options
+    })
 
 #Buy now
 @login_required
@@ -292,15 +319,16 @@ def buy_now(request, product_id):
         request.session['buy_now_size'] = size
         return redirect('checkout')
 
-
+#about
 def about(request):
     return render(request, 'store/about.html')
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib import messages
 
-
+#signup
 def signup_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)

@@ -1,0 +1,144 @@
+<!-- store/templates/store/logged_out.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Logged Out</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom right, #d4f0ff, #f6f8ff);
+      overflow: hidden;
+    }
+
+    .background-icons {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .background-icons i {
+      position: absolute;
+      color: rgba(74, 144, 226, 0.08);
+      filter: blur(1px);
+      transform: rotate(-10deg);
+    }
+
+    .icon1 { top: 5%; left: 10%; font-size: 80px; }
+    .icon2 { top: 15%; right: 15%; font-size: 90px; }
+    .icon3 { top: 50%; left: 20%; font-size: 100px; }
+    .icon4 { bottom: 10%; right: 10%; font-size: 85px; }
+    .icon5 { bottom: 25%; left: 40%; font-size: 95px; }
+    .icon6 { top: 40%; right: 30%; font-size: 70px; }
+    .icon7 { top: 70%; left: 10%; font-size: 75px; }
+    .icon8 { bottom: 5%; right: 30%; font-size: 90px; }
+    .icon9 { top: 25%; left: 60%; font-size: 80px; }
+    .icon10 { top: 60%; right: 5%; font-size: 100px; }
+
+    .main-container {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logout-container {
+      background-color: white;
+      padding: 50px 40px;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 500px;
+      z-index: 2;
+    }
+
+    .logout-container h2 {
+      font-size: 2rem;
+      margin-bottom: 12px;
+      color: #333;
+    }
+
+    .logout-container p {
+      font-size: 1.1rem;
+      color: #555;
+      margin-top: 0.5rem;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 14px 32px;
+      background-color: #4a90e2;
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 14px;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #357bd8;
+      transform: scale(1.05);
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+      position: absolute;
+      bottom: 10px;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="background-icons">
+    <i class="fas fa-shopping-cart icon1"></i>
+    <i class="fas fa-tags icon2"></i>
+    <i class="fas fa-gift icon3"></i>
+    <i class="fas fa-bag-shopping icon4"></i>
+    <i class="fas fa-credit-card icon5"></i>
+    <i class="fas fa-receipt icon6"></i>
+    <i class="fas fa-box icon7"></i>
+    <i class="fas fa-truck icon8"></i>
+    <i class="fas fa-store icon9"></i>
+    <i class="fas fa-barcode icon10"></i>
+  </div>
+
+  <div class="main-container">
+    <div class="logout-container">
+      <h2>👋 You’ve been logged out!</h2>
+      <p>Thanks for shopping with us. See you again soon!</p>
+      <a href="{% url 'home' %}" class="btn">🏠 Return to Home</a>
+      <p style="margin-top: 15px;">
+        <a href="{% url 'login' %}">🔐 Log in again</a>
+      </p>
+    </div>
+    <footer>
+      &copy; 2025 MyShop. All rights reserved.
+    </footer>
+  </div>
+
+</body>
+</html>
+
+
+
+
+

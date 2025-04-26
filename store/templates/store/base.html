@@ -34,7 +34,20 @@
           <a class="nav-link text-white" href="{% url 'home' %}">Home</a>
         </li>
 
-        <!-- 🛒 Cart with item count -->
+        <!-- Search Bar comes immediately after Home -->
+        <li class="nav-item me-3">
+          <form class="d-flex" role="search" method="get" action="{% url 'search' %}" style="flex-grow: 1; max-width: 600px;">
+            <div class="input-group">
+              <input class="form-control rounded-start-pill" type="search" name="q" placeholder="Search MyShop" aria-label="Search">
+              <button class="btn" type="submit" style="background-color: #febd69; border-top-right-radius: 50px; border-bottom-right-radius: 50px;">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </form>
+
+        </li>
+
+        <!-- Cart with item count -->
         <li class="nav-item me-3 position-relative">
           <a class="nav-link text-white" href="{% url 'view_cart' %}">
             <i class="fa fa-shopping-cart"></i> Cart
@@ -50,13 +63,6 @@
           <a href="{% url 'todays_deals' %}" class="btn btn-danger btn-sm rounded-pill fw-bold deals-btn">
             🔥 Today’s Deals
           </a>
-        </li>
-
-        <li class="nav-item">
-          <form class="d-flex" role="search" method="get" action="{% url 'search' %}">
-            <input class="form-control me-2" type="search" name="q" placeholder="Search products..." aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
         </li>
 
         {% if user.is_authenticated %}

@@ -45,8 +45,13 @@
     </div>
 
   {% else %}
-    <div class="alert alert-warning text-center">
+    <div class="alert alert-warning text-center mt-4">
       Your cart is empty.
+    </div>
+    <div class="text-center mt-3">
+      <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+        ← Back to Home
+      </a>
     </div>
   {% endif %}
 </div>

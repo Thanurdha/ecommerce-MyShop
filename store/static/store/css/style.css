@@ -1,3 +1,8 @@
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+
 /* Background wrapper for login/signup */
 .signup-background {
   position: relative;

@@ -248,3 +248,26 @@ def logout_view(request):
     logout(request)
     request.session.flush()
     return redirect('logged_out')
+
+
+from .forms import ProfileForm
+from .models import Profile
+
+from .models import Profile  # make sure this is imported
+
+@login_required
+def profile_view(request):
+    # ✅ This ensures a Profile is created if missing
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "✅ Profile updated successfully.")
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, 'store/profile.html', {'form': form, 'profile': profile})
+

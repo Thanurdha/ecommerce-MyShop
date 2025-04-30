@@ -22,9 +22,6 @@ urlpatterns = [
     path('buy-now/<int:product_id>/', views.buy_now, name='buy_now'),
     path('logout/confirmation/', views.logout_confirmation, name='logout_confirmation'),
     path('logged-out/', views.logged_out, name='logged_out'),
+    path('profile/', views.profile_view, name='profile'),
 ]
-
-
-
-
 

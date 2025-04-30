@@ -165,13 +165,90 @@
   {% block content %}{% endblock %}
 </div>
 
-<!-- Footer -->
-<footer class="bg-dark text-white text-center py-4 mt-5">
-  <p class="mb-1">&copy; 2025 MyShop. All rights reserved.</p>
-  <div class="mt-2">
-    <a href="{% url 'about' %}" class="text-white text-decoration-underline">About Us</a>
+<!-- Footer Section -->
+<footer class="bg-black text-white pt-5 pb-3 mt-5">
+  <div class="container">
+    <div class="row text-start small">
+
+      <!-- Customer Service -->
+      <div class="col-md-2 mb-4">
+        <h6 class="fw-bold text-white">Customer service</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-white-50 text-decoration-none">Help Center</a></li>
+          <li><a href="#" class="text-white-50 text-decoration-none">Transaction Services</a></li>
+          <li><a href="#" class="text-white-50 text-decoration-none">Agreement for non-EU/UK</a></li>
+          <li><a href="#" class="text-white-50 text-decoration-none">Terms & Conditions</a></li>
+          <li><a href="#" class="text-white-50 text-decoration-none">Feedback Survey</a></li>
+        </ul>
+      </div>
+
+      <!-- Shopping -->
+      <div class="col-md-2 mb-4">
+        <h6 class="fw-bold text-white">Shopping with us</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-white-50 text-decoration-none">Making payments</a></li>
+          <li><a href="#" class="text-white-50 text-decoration-none">Delivery options</a></li>
+          <li><a href="#" class="text-white-50 text-decoration-none">Buyer Protection</a></li>
+        </ul>
+      </div>
+
+      <!-- Collaborate -->
+      <div class="col-md-2 mb-4">
+        <h6 class="fw-bold text-white">Collaborate with us</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-white-50 text-decoration-none">Partnerships</a></li>
+          <li><a href="#" class="text-white-50 text-decoration-none">Affiliate program</a></li>
+          <li><a href="#" class="text-white-50 text-decoration-none">Seller Log In</a></li>
+          <li><a href="#" class="text-white-50 text-decoration-none">Non-Chinese Seller</a></li>
+        </ul>
+      </div>
+
+      <!-- Payment -->
+      <div class="col-md-3 mb-4">
+        <h6 class="fw-bold text-white">Pay with</h6>
+        <div class="d-flex gap-3 mt-2">
+          <img src="{% static 'store/images/pay/visa.png' %}" height="24" alt="Visa">
+          <img src="{% static 'store/images/pay/mastercard.png' %}" height="24" alt="Mastercard">
+          <img src="{% static 'store/images/pay/amex.png' %}" height="24" alt="Amex">
+        </div>
+      </div>
+
+      <!-- Social Media -->
+      <div class="col-md-3 mb-4">
+        <h6 class="fw-bold text-white">Stay connected</h6>
+        <div class="d-flex gap-3 mt-2">
+          <a href="#"><i class="fab fa-facebook fa-lg text-white-50"></i></a>
+          <a href="#"><i class="fab fa-twitter fa-lg text-white-50"></i></a>
+          <a href="#"><i class="fab fa-instagram fa-lg text-white-50"></i></a>
+          <a href="#"><i class="fab fa-whatsapp fa-lg text-white-50"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Divider -->
+    <hr class="border-gray">
+
+    <!-- Bottom Row -->
+    <div class="row small">
+      <div class="col-md-6">
+        <p class="mb-1 text-white-50">
+          Browse by Category: Popular, Promotion, Low Price, Reviews, Blog, Video
+        </p>
+        <p class="mb-0 text-white-50">
+          &copy; 2025 MyShop.com | <a href="#" class="text-white text-decoration-none">Privacy Policy</a> |
+          <a href="#" class="text-white text-decoration-none">Terms of Use</a> |
+          <a href="#" class="text-white text-decoration-none">Sitemap</a>
+        </p>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <p class="mb-1 text-white-50">MyShop Group: MyShop Global, MyPay, MyMall</p>
+        <p class="mb-0 text-white-50">Languages: English, Sinhala, Tamil, Arabic, Hindi</p>
+      </div>
+    </div>
   </div>
 </footer>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

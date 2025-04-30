@@ -30,11 +30,12 @@
     <a class="navbar-brand" href="{% url 'home' %}">MyShop</a>
     <div class="collapse navbar-collapse" id="navbarContent">
       <ul class="navbar-nav ms-auto align-items-center">
+        <!-- Home -->
         <li class="nav-item me-3">
           <a class="nav-link text-white" href="{% url 'home' %}">Home</a>
         </li>
 
-        <!-- Search Bar comes immediately after Home -->
+        <!-- Search Bar -->
         <li class="nav-item me-3">
           <form class="d-flex" role="search" method="get" action="{% url 'search' %}" style="flex-grow: 1; max-width: 600px;">
             <div class="input-group">
@@ -44,10 +45,9 @@
               </button>
             </div>
           </form>
-
         </li>
 
-        <!-- Cart with item count -->
+        <!-- Cart -->
         <li class="nav-item me-3 position-relative">
           <a class="nav-link text-white" href="{% url 'view_cart' %}">
             <i class="fa fa-shopping-cart"></i>
@@ -59,6 +59,7 @@
           </a>
         </li>
 
+        <!-- Today's Deals -->
         <li class="nav-item me-3">
           <a href="{% url 'todays_deals' %}" class="btn btn-danger btn-sm rounded-pill fw-bold deals-btn">
             🔥 Today’s Deals
@@ -66,6 +67,14 @@
         </li>
 
         {% if user.is_authenticated %}
+        <!-- Orders -->
+        <li class="nav-item me-3">
+          <a class="nav-link text-white" href="{% url 'order_history' %}">
+            <i class="fas fa-clock me-1"></i> Orders
+          </a>
+        </li>
+
+        <!-- User + Logout -->
         <li class="nav-item ms-3">
           <span class="text-white me-2">Welcome {{ user.username }}</span>
           <form action="{% url 'logout' %}" method="post" class="d-inline">
@@ -74,6 +83,7 @@
           </form>
         </li>
         {% else %}
+        <!-- Login/Signup -->
         <li class="nav-item ms-3">
           <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Login</a>
           <a href="{% url 'signup' %}" class="btn btn-warning btn-sm">Sign Up</a>
@@ -100,19 +110,6 @@
 <div class="container content-container">
   {% block content %}{% endblock %}
 </div>
-
-<!-- Cart with item count -->
-<li class="nav-item me-3 position-relative">
-  <a class="nav-link text-white" href="{% url 'view_cart' %}">
-    <i class="fa fa-shopping-cart"></i>
-    {% if cart_item_count > 0 %}
-      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-        {{ cart_item_count }}
-      </span>
-    {% endif %}
-  </a>
-</li>
-
 
 <!-- Footer -->
 <footer class="bg-dark text-white text-center py-4 mt-5">

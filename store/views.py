@@ -5,20 +5,30 @@ from django.contrib.auth import logout, login
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q, Avg
-from .models import Product, Category, CartItem, OrderGroup, OrderItem, Review
+from .models import Product, Category, CartItem, OrderGroup, OrderItem, Review, Profile
+from .forms import ProfileForm
+from collections import defaultdict
 
-# Home page
+# ✅ Home page (updated to include categorized_products)
 def home(request):
-    products = Product.objects.all()
+    products = Product.objects.select_related('category').all()
     categories = Category.objects.all()
     deals = Product.objects.filter(is_deal=True)[:5]
+
+    # Group products by category
+    categorized_products = defaultdict(list)
+    for product in products:
+        categorized_products[product.category].append(product)
+
     return render(request, 'store/home.html', {
         'products': products,
         'categories': categories,
         'deals': deals,
+        'categorized_products': categorized_products,
     })
 
-# Products by category
+
+# ✅ Products by category
 def category_products(request, category_id):
     selected_category = Category.objects.get(id=category_id)
     products = Product.objects.filter(category=selected_category).annotate(avg_rating=Avg('reviews__rating'))
@@ -27,7 +37,8 @@ def category_products(request, category_id):
         'products': products
     })
 
-# Add to cart
+
+# ✅ Add to cart
 @login_required
 @never_cache
 def add_to_cart(request, product_id):
@@ -39,7 +50,8 @@ def add_to_cart(request, product_id):
     messages.success(request, f"✅ {product.name} added to your cart!")
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
-# View cart
+
+# ✅ View cart
 @login_required
 @never_cache
 def view_cart(request):
@@ -50,7 +62,8 @@ def view_cart(request):
         'total': total
     })
 
-# Remove from cart
+
+# ✅ Remove from cart
 @login_required
 @never_cache
 def remove_from_cart(request, product_id):
@@ -59,7 +72,8 @@ def remove_from_cart(request, product_id):
         cart_item.delete()
     return redirect('view_cart')
 
-# Checkout
+
+# ✅ Checkout
 @login_required
 @never_cache
 def checkout(request):
@@ -83,14 +97,14 @@ def checkout(request):
         'total': total
     })
 
-# Thank you
+
+# ✅ Thank you page
 @login_required
 @never_cache
 def thank_you(request):
     order_group_id = request.session.pop('order_group_id', None)
     if not order_group_id:
         return redirect('home')
-
     order_group = get_object_or_404(OrderGroup, id=order_group_id, user=request.user)
     order_items = order_group.orderitem_set.all()
     total = order_group.total_amount()
@@ -99,7 +113,8 @@ def thank_you(request):
         'total': total
     })
 
-# Order history
+
+# ✅ Order history
 @login_required
 @never_cache
 def order_history(request):
@@ -108,11 +123,13 @@ def order_history(request):
         'orders': orders
     })
 
-# About page
+
+# ✅ About page
 def about(request):
     return render(request, 'store/about.html')
 
-# Payment page
+
+# ✅ Payment page
 @login_required
 @never_cache
 def payment_page(request):
@@ -166,14 +183,16 @@ def payment_page(request):
         'total': total
     })
 
-# Deals page
+
+# ✅ Today's deals
 def todays_deals(request):
     deal_products = Product.objects.filter(is_deal=True)
     return render(request, 'store/todays_deals.html', {
         'products': deal_products
     })
 
-# Search products
+
+# ✅ Search products
 def search_products(request):
     query = request.GET.get('q', '')
     results = Product.objects.filter(Q(name__icontains=query) | Q(category__name__icontains=query)) if query else []
@@ -182,7 +201,8 @@ def search_products(request):
         'results': results,
     })
 
-# Product detail
+
+# ✅ Product detail
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     reviews = product.reviews.all().order_by('-created_at')
@@ -204,7 +224,8 @@ def product_detail(request, product_id):
         'size_options': size_options
     })
 
-# Buy now
+
+# ✅ Buy now
 @login_required
 @never_cache
 def buy_now(request, product_id):
@@ -218,7 +239,8 @@ def buy_now(request, product_id):
         return redirect('payment')
     return redirect('product_detail', product_id=product_id)
 
-# Signup view
+
+# ✅ Signup
 def signup_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -233,31 +255,25 @@ def signup_view(request):
         form = UserCreationForm()
     return render(request, 'store/signup.html', {'form': form})
 
-# Logout confirmation page
+
+# ✅ Logout-related views
 @login_required
 def logout_confirmation(request):
     return render(request, 'store/logout_confirmation.html')
 
-# Logged out page
 @never_cache
 def logged_out(request):
     return render(request, 'store/logged_out.html')
 
-# Logout view
 def logout_view(request):
     logout(request)
     request.session.flush()
     return redirect('logged_out')
 
 
-from .forms import ProfileForm
-from .models import Profile
-
-from .models import Profile  # make sure this is imported
-
+# ✅ Profile view
 @login_required
 def profile_view(request):
-    # ✅ This ensures a Profile is created if missing
     profile, created = Profile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
@@ -265,9 +281,8 @@ def profile_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, "✅ Profile updated successfully.")
-            return redirect('profile')
+            return redirect('home')
     else:
         form = ProfileForm(instance=profile)
 
     return render(request, 'store/profile.html', {'form': form, 'profile': profile})
-

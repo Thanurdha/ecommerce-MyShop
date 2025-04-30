@@ -51,125 +51,73 @@
 <body>
 
 <!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top px-4 shadow-sm">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="{% url 'home' %}">MyShop</a>
+<nav class="navbar navbar-expand-lg shadow-sm sticky-top" style="background-color: var(--text-color);">
+  <div class="container-fluid px-4">
+    <!-- Logo/Brand -->
+    <a class="navbar-brand fw-bold fs-4 text-white" href="{% url 'home' %}">
+      <i class="fas fa-store-alt me-2"></i> TrendCart
+    </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <!-- Search Bar -->
+    <form class="d-flex mx-auto w-50" role="search" method="get" action="{% url 'search' %}">
+      <div class="input-group">
+        <input type="search" name="q" class="form-control rounded-start-pill" placeholder="Search products..." aria-label="Search">
+        <button class="btn" type="submit" style="background-color: var(--secondary-color); border-top-right-radius: 50px; border-bottom-right-radius: 50px;">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </form>
 
-    <div class="collapse navbar-collapse" id="navbarContent">
-      <ul class="navbar-nav ms-auto align-items-center">
+    <!-- Right Links & Icons -->
+    <ul class="navbar-nav ms-auto align-items-center">
+      <!-- Today's Deals -->
+      <li class="nav-item me-3">
+        <a href="{% url 'todays_deals' %}" class="nav-link text-white fw-medium">Deals</a>
+      </li>
 
-        <!-- Home -->
-        <li class="nav-item me-3">
-          <a class="nav-link text-white" href="{% url 'home' %}">Home</a>
-        </li>
+      <!-- Orders -->
+      {% if user.is_authenticated %}
+      <li class="nav-item me-3">
+        <a href="{% url 'order_history' %}" class="nav-link text-white"><i class="fas fa-box me-1"></i> Orders</a>
+      </li>
 
-        <!-- Search Bar -->
-        <li class="nav-item me-3">
-          <form class="d-flex" role="search" method="get" action="{% url 'search' %}" style="flex-grow: 1; max-width: 600px;">
-            <div class="input-group">
-              <input class="form-control rounded-start-pill" type="search" name="q" placeholder="Search MyShop" aria-label="Search">
-              <button class="btn" type="submit" style="background-color: #febd69; border-top-right-radius: 50px; border-bottom-right-radius: 50px;">
-                <i class="fas fa-search"></i>
-              </button>
-            </div>
-          </form>
-        </li>
+      <!-- Cart Icon -->
+      <li class="nav-item me-3 position-relative">
+        <a href="{% url 'view_cart' %}" class="nav-link text-white">
+          <i class="fas fa-shopping-cart"></i>
+          {% if cart_item_count > 0 %}
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ cart_item_count }}
+          </span>
+          {% endif %}
+        </a>
+      </li>
 
-        <!-- Cart -->
-        <li class="nav-item me-3 position-relative">
-          <a class="nav-link text-white" href="{% url 'view_cart' %}">
-            <i class="fa fa-shopping-cart"></i>
-            {% if cart_item_count > 0 %}
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                {{ cart_item_count }}
-              </span>
-            {% endif %}
-          </a>
-        </li>
-
-        <!-- Wishlist -->
-        <li class="nav-item me-3">
-          <a class="nav-link text-white" href="#">
-            <i class="fas fa-heart"></i>
-          </a>
-        </li>
-
-        <!-- Deals -->
-        <li class="nav-item me-3">
-          <a href="{% url 'todays_deals' %}" class="btn btn-danger btn-sm rounded-pill fw-bold deals-btn">
-            🔥 Today’s Deals
-          </a>
-        </li>
-
-        {% if user.is_authenticated %}
-        <!-- Orders -->
-        <li class="nav-item me-3">
-          <a class="nav-link text-white" href="{% url 'order_history' %}">
-            <i class="fas fa-clock me-1"></i> Orders
-          </a>
-        </li>
-
-        <!-- Notifications -->
-        <li class="nav-item dropdown me-3">
-          <a class="nav-link text-white position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
-            <i class="fas fa-bell"></i>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">2</span>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
-            <li><a class="dropdown-item" href="#">New deal on Shoes!</a></li>
-            <li><a class="dropdown-item" href="#">Order shipped 🚚</a></li>
-          </ul>
-        </li>
-
-        <!-- Language -->
-        <li class="nav-item dropdown me-3">
-          <a class="nav-link dropdown-toggle text-white" href="#" data-bs-toggle="dropdown">🌐</a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#">🇬🇧 English</a></li>
-            <li><a class="dropdown-item" href="#">🇱🇰 Sinhala</a></li>
-          </ul>
-        </li>
-
-        <!-- Theme Toggle -->
-        <li class="nav-item me-3">
-          <button class="btn btn-outline-light btn-sm" onclick="document.body.classList.toggle('bg-light'); document.body.classList.toggle('text-dark');">
-            🌙/☀️
-          </button>
-        </li>
-
-        <!-- Profile Dropdown -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="{{ user.profile.profile_image.url|default:'/media/profile_images/default.png' }}" class="rounded-circle me-2" width="30" height="30" style="object-fit: cover;">
-            {{ user.username }}
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user me-2"></i> View Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-              <form action="{% url 'logout' %}" method="post" class="px-3">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-outline-danger btn-sm w-100">Logout</button>
-              </form>
-            </li>
-          </ul>
-        </li>
-
-        {% else %}
-        <!-- Login/Signup -->
-        <li class="nav-item ms-3">
-          <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Login</a>
-          <a href="{% url 'signup' %}" class="btn btn-warning btn-sm">Sign Up</a>
-        </li>
-        {% endif %}
-      </ul>
-    </div>
+      <!-- Profile Icon -->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li>
+            <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+              <button type="submit" class="dropdown-item">Logout</button>
+            </form>
+          </li>
+        </ul>
+      </li>
+      {% else %}
+      <li class="nav-item me-2">
+        <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Login</a>
+        <a href="{% url 'signup' %}" class="btn btn-warning btn-sm">Sign Up</a>
+      </li>
+      {% endif %}
+    </ul>
   </div>
 </nav>
+
 
 <!-- Flash Messages -->
 <div class="container mt-3">

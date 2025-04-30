@@ -27,9 +27,15 @@
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 mb-4">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'home' %}">MyShop</a>
+    <a class="navbar-brand fw-bold" href="{% url 'home' %}">MyShop</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
     <div class="collapse navbar-collapse" id="navbarContent">
       <ul class="navbar-nav ms-auto align-items-center">
+
         <!-- Home -->
         <li class="nav-item me-3">
           <a class="nav-link text-white" href="{% url 'home' %}">Home</a>
@@ -59,7 +65,7 @@
           </a>
         </li>
 
-        <!-- Today's Deals -->
+        <!-- Deals -->
         <li class="nav-item me-3">
           <a href="{% url 'todays_deals' %}" class="btn btn-danger btn-sm rounded-pill fw-bold deals-btn">
             🔥 Today’s Deals
@@ -74,21 +80,24 @@
           </a>
         </li>
 
-        <li class="nav-item me-3">
-  <a class="nav-link text-white" href="{% url 'profile' %}">
-    <i class="fas fa-user-circle me-1"></i> Profile
-  </a>
-</li>
-
-
-        <!-- User + Logout -->
-        <li class="nav-item ms-3">
-          <span class="text-white me-2">Welcome {{ user.username }}</span>
-          <form action="{% url 'logout' %}" method="post" class="d-inline">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
-          </form>
+        <!-- Profile Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="{{ user.profile.profile_image.url|default:'/media/profile_images/default.png' }}" class="rounded-circle me-2" width="30" height="30" style="object-fit: cover;">
+            {{ user.username }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user me-2"></i> View Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form action="{% url 'logout' %}" method="post" class="px-3">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger btn-sm w-100">Logout</button>
+              </form>
+            </li>
+          </ul>
         </li>
+
         {% else %}
         <!-- Login/Signup -->
         <li class="nav-item ms-3">

@@ -101,6 +101,19 @@
   {% block content %}{% endblock %}
 </div>
 
+<!-- Cart with item count -->
+<li class="nav-item me-3 position-relative">
+  <a class="nav-link text-white" href="{% url 'view_cart' %}">
+    <i class="fa fa-shopping-cart"></i>
+    {% if cart_item_count > 0 %}
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+        {{ cart_item_count }}
+      </span>
+    {% endif %}
+  </a>
+</li>
+
+
 <!-- Footer -->
 <footer class="bg-dark text-white text-center py-4 mt-5">
   <p class="mb-1">&copy; 2025 MyShop. All rights reserved.</p>

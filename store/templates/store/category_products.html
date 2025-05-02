@@ -29,6 +29,10 @@
             <p class="card-text">{{ product.description|truncatewords:10 }}</p>
             <p class="fw-bold">Rs. {{ product.price }}</p>
             <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-primary">Add to Cart</a>
+            <a href="{% url 'add_to_wishlist' product.id %}" class="btn btn-outline-danger mt-2">
+              <i class="fa fa-heart"></i> Add to Wishlist
+            </a>
+
           </div>
         </div>
       </div>

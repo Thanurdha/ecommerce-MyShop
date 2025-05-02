@@ -12,7 +12,7 @@
     <ul class="list-group mb-3 text-start">
       {% for item in cart_items %}
         <li class="list-group-item d-flex justify-content-between">
-          {{ item.name }} × {{ item.quantity }}
+          {{ item.product.name }} × {{ item.quantity }}
           <span>Rs. {{ item.subtotal }}</span>
         </li>
       {% endfor %}

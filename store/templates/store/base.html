@@ -8,8 +8,34 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'store/css/style.css' %}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    .navbar-brand, .nav-link, .btn {
+      font-weight: 500;
+    }
+    .btn {
+      font-size: 0.95rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+    }
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  <style>
+    body {
+      padding-top: 70px; /* offset for sticky navbar */
+    }
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.1); }
@@ -25,64 +51,73 @@
 <body>
 
 <!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 mb-4">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'home' %}">MyShop</a>
-    <div class="collapse navbar-collapse" id="navbarContent">
-      <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item me-3">
-          <a class="nav-link text-white" href="{% url 'home' %}">Home</a>
-        </li>
+<nav class="navbar navbar-expand-lg shadow-sm sticky-top" style="background-color: var(--text-color);">
+  <div class="container-fluid px-4">
+    <!-- Logo/Brand -->
+    <a class="navbar-brand fw-bold fs-4 text-white" href="{% url 'home' %}">
+      <i class="fas fa-store-alt me-2"></i> TrendCart
+    </a>
 
-        <!-- Search Bar comes immediately after Home -->
-        <li class="nav-item me-3">
-          <form class="d-flex" role="search" method="get" action="{% url 'search' %}" style="flex-grow: 1; max-width: 600px;">
-            <div class="input-group">
-              <input class="form-control rounded-start-pill" type="search" name="q" placeholder="Search MyShop" aria-label="Search">
-              <button class="btn" type="submit" style="background-color: #febd69; border-top-right-radius: 50px; border-bottom-right-radius: 50px;">
-                <i class="fas fa-search"></i>
-              </button>
-            </div>
-          </form>
+    <!-- Search Bar -->
+    <form class="d-flex mx-auto w-50" role="search" method="get" action="{% url 'search' %}">
+      <div class="input-group">
+        <input type="search" name="q" class="form-control rounded-start-pill" placeholder="Search products..." aria-label="Search">
+        <button class="btn" type="submit" style="background-color: var(--secondary-color); border-top-right-radius: 50px; border-bottom-right-radius: 50px;">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </form>
 
-        </li>
+    <!-- Right Links & Icons -->
+    <ul class="navbar-nav ms-auto align-items-center">
+      <!-- Today's Deals -->
+      <li class="nav-item me-3">
+        <a href="{% url 'todays_deals' %}" class="nav-link text-white fw-medium">Deals</a>
+      </li>
 
-        <!-- Cart with item count -->
-        <li class="nav-item me-3 position-relative">
-          <a class="nav-link text-white" href="{% url 'view_cart' %}">
-            <i class="fa fa-shopping-cart"></i>
-            {% if cart_item_count > 0 %}
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                {{ cart_item_count }}
-              </span>
-            {% endif %}
-          </a>
-        </li>
+      <!-- Orders -->
+      {% if user.is_authenticated %}
+      <li class="nav-item me-3">
+        <a href="{% url 'order_history' %}" class="nav-link text-white"><i class="fas fa-box me-1"></i> Orders</a>
+      </li>
 
-        <li class="nav-item me-3">
-          <a href="{% url 'todays_deals' %}" class="btn btn-danger btn-sm rounded-pill fw-bold deals-btn">
-            🔥 Today’s Deals
-          </a>
-        </li>
+      <!-- Cart Icon -->
+      <li class="nav-item me-3 position-relative">
+        <a href="{% url 'view_cart' %}" class="nav-link text-white">
+          <i class="fas fa-shopping-cart"></i>
+          {% if cart_item_count > 0 %}
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ cart_item_count }}
+          </span>
+          {% endif %}
+        </a>
+      </li>
 
-        {% if user.is_authenticated %}
-        <li class="nav-item ms-3">
-          <span class="text-white me-2">Welcome {{ user.username }}</span>
-          <form action="{% url 'logout' %}" method="post" class="d-inline">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
-          </form>
-        </li>
-        {% else %}
-        <li class="nav-item ms-3">
-          <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Login</a>
-          <a href="{% url 'signup' %}" class="btn btn-warning btn-sm">Sign Up</a>
-        </li>
-        {% endif %}
-      </ul>
-    </div>
+      <!-- Profile Icon -->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li>
+            <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+              <button type="submit" class="dropdown-item">Logout</button>
+            </form>
+          </li>
+        </ul>
+      </li>
+      {% else %}
+      <li class="nav-item me-2">
+        <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Login</a>
+        <a href="{% url 'signup' %}" class="btn btn-warning btn-sm">Sign Up</a>
+      </li>
+      {% endif %}
+    </ul>
   </div>
 </nav>
+
 
 <!-- Flash Messages -->
 <div class="container mt-3">
@@ -103,11 +138,73 @@
 
 <!-- Footer -->
 <footer class="bg-dark text-white text-center py-4 mt-5">
-  <p class="mb-1">&copy; 2025 MyShop. All rights reserved.</p>
-  <div class="mt-2">
-    <a href="{% url 'about' %}" class="text-white text-decoration-underline">About Us</a>
+  <div class="container">
+    <div class="row text-start mb-4">
+      <div class="col-md-2">
+        <h6 class="fw-bold">Customer service</h6>
+        <ul class="list-unstyled small">
+          <li>Help Center</li>
+          <li>Transaction Services</li>
+          <li>Agreement for non-EU/UK</li>
+          <li>Terms & Conditions</li>
+          <li>Feedback Survey</li>
+        </ul>
+      </div>
+      <div class="col-md-2">
+        <h6 class="fw-bold">Shopping with us</h6>
+        <ul class="list-unstyled small">
+          <li>Making payments</li>
+          <li>Delivery options</li>
+          <li>Buyer Protection</li>
+        </ul>
+      </div>
+      <div class="col-md-2">
+        <h6 class="fw-bold">Collaborate with us</h6>
+        <ul class="list-unstyled small">
+          <li>Partnerships</li>
+          <li>Affiliate program</li>
+          <li>Seller Log In</li>
+          <li>Non-Chinese Seller</li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h6 class="fw-bold">Pay with</h6>
+        <img src="{% static 'store/images/pay/visa.png' %}" height="28" alt="Visa">
+        <img src="{% static 'store/images/pay/mastercard.png' %}" height="28" alt="MasterCard">
+        <img src="{% static 'store/images/pay/amex.png' %}" height="28" alt="Amex">
+      </div>
+      <div class="col-md-3">
+        <h6 class="fw-bold">Stay connected</h6>
+        <div class="d-flex gap-2 mt-1">
+          <i class="fab fa-facebook fs-5"></i>
+          <i class="fab fa-twitter fs-5"></i>
+          <i class="fab fa-instagram fs-5"></i>
+          <i class="fab fa-whatsapp fs-5"></i>
+        </div>
+      </div>
+    </div>
+
+    <hr class="text-secondary">
+
+    <div class="row text-start small">
+      <div class="col-md-6">
+        <p>Browse by Category: Popular, Promotion, Low Price, Reviews, Blog, Video</p>
+        <p>© 2025 <strong>TrendCart.com</strong> |
+          <a href="#" class="text-white">Privacy Policy</a> |
+          <a href="#" class="text-white">Terms of Use</a> |
+          <a href="#" class="text-white">Sitemap</a>
+        </p>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <p>TrendCart Group: TrendCart Global, TrendPay, TrendMall</p>
+        <p>Languages: English, Sinhala, Tamil, Arabic, Hindi</p>
+      </div>
+    </div>
   </div>
 </footer>
+
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

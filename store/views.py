@@ -5,20 +5,30 @@ from django.contrib.auth import logout, login
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q, Avg
-from .models import Product, Category, CartItem, Order, Review
+from .models import Product, Category, CartItem, OrderGroup, OrderItem, Review, Profile
+from .forms import ProfileForm
+from collections import defaultdict
 
-# Home page
+# ✅ Home page (updated to include categorized_products)
 def home(request):
-    products = Product.objects.all()
+    products = Product.objects.select_related('category').all()
     categories = Category.objects.all()
     deals = Product.objects.filter(is_deal=True)[:5]
+
+    # Group products by category
+    categorized_products = defaultdict(list)
+    for product in products:
+        categorized_products[product.category].append(product)
+
     return render(request, 'store/home.html', {
         'products': products,
         'categories': categories,
         'deals': deals,
+        'categorized_products': categorized_products,
     })
 
-# Products by category
+
+# ✅ Products by category
 def category_products(request, category_id):
     selected_category = Category.objects.get(id=category_id)
     products = Product.objects.filter(category=selected_category).annotate(avg_rating=Avg('reviews__rating'))
@@ -27,7 +37,8 @@ def category_products(request, category_id):
         'products': products
     })
 
-# Add to cart
+
+# ✅ Add to cart
 @login_required
 @never_cache
 def add_to_cart(request, product_id):
@@ -39,7 +50,8 @@ def add_to_cart(request, product_id):
     messages.success(request, f"✅ {product.name} added to your cart!")
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
-# View cart
+
+# ✅ View cart
 @login_required
 @never_cache
 def view_cart(request):
@@ -50,7 +62,8 @@ def view_cart(request):
         'total': total
     })
 
-# Remove from cart
+
+# ✅ Remove from cart
 @login_required
 @never_cache
 def remove_from_cart(request, product_id):
@@ -59,49 +72,64 @@ def remove_from_cart(request, product_id):
         cart_item.delete()
     return redirect('view_cart')
 
-# Checkout
+
+# ✅ Checkout
 @login_required
 @never_cache
 def checkout(request):
     cart_items = CartItem.objects.filter(user=request.user)
     total = sum(item.subtotal() for item in cart_items)
     if request.method == 'POST':
+        order_group = OrderGroup.objects.create(user=request.user)
         for item in cart_items:
-            Order.objects.create(user=request.user, product=item.product, quantity=item.quantity)
+            OrderItem.objects.create(
+                order_group=order_group,
+                product=item.product,
+                quantity=item.quantity,
+                price_at_purchase=item.product.price
+            )
+        cart_items.delete()
         request.session['from_cart_checkout'] = True
-        return redirect('payment')
+        request.session['order_group_id'] = order_group.id
+        return redirect('thank_you')
     return render(request, 'store/checkout.html', {
         'cart_items': cart_items,
         'total': total
     })
 
-# Thank you
+
+# ✅ Thank you page
 @login_required
 @never_cache
 def thank_you(request):
-    order_summary = request.session.get('order_summary', [])
-    total = request.session.get('order_total', 0)
-    request.session.pop('order_summary', None)
-    request.session.pop('order_total', None)
+    order_group_id = request.session.pop('order_group_id', None)
+    if not order_group_id:
+        return redirect('home')
+    order_group = get_object_or_404(OrderGroup, id=order_group_id, user=request.user)
+    order_items = order_group.orderitem_set.all()
+    total = order_group.total_amount()
     return render(request, 'store/thankyou.html', {
-        'cart_items': order_summary,
+        'cart_items': order_items,
         'total': total
     })
 
-# Order history
+
+# ✅ Order history
 @login_required
 @never_cache
 def order_history(request):
-    orders = Order.objects.filter(user=request.user).order_by('-ordered_at')
+    orders = OrderGroup.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'store/order_history.html', {
         'orders': orders
     })
 
-# About page
+
+# ✅ About page
 def about(request):
     return render(request, 'store/about.html')
 
-# Payment page
+
+# ✅ Payment page
 @login_required
 @never_cache
 def payment_page(request):
@@ -112,13 +140,14 @@ def payment_page(request):
         product = get_object_or_404(Product, id=buy_now_product_id)
         subtotal = product.price * buy_now_quantity
         if request.method == 'POST':
-            Order.objects.create(user=request.user, product=product, quantity=buy_now_quantity)
-            request.session['order_summary'] = [{
-                'name': product.name,
-                'quantity': buy_now_quantity,
-                'subtotal': float(subtotal)
-            }]
-            request.session['order_total'] = float(subtotal)
+            order_group = OrderGroup.objects.create(user=request.user)
+            OrderItem.objects.create(
+                order_group=order_group,
+                product=product,
+                quantity=buy_now_quantity,
+                price_at_purchase=product.price
+            )
+            request.session['order_group_id'] = order_group.id
             del request.session['buy_now_product_id']
             del request.session['buy_now_quantity']
             return redirect('thank_you')
@@ -135,16 +164,17 @@ def payment_page(request):
 
     total = sum(item.subtotal() for item in cart_items)
     if request.method == 'POST':
+        order_group = OrderGroup.objects.create(user=request.user)
         for item in cart_items:
-            Order.objects.create(user=request.user, product=item.product, quantity=item.quantity)
-        request.session['order_summary'] = [{
-            'name': item.product.name,
-            'quantity': item.quantity,
-            'subtotal': float(item.subtotal())
-        } for item in cart_items]
+            OrderItem.objects.create(
+                order_group=order_group,
+                product=item.product,
+                quantity=item.quantity,
+                price_at_purchase=item.product.price
+            )
+        request.session['order_group_id'] = order_group.id
         request.session['order_total'] = float(total)
         cart_items.delete()
-        request.session['from_cart_checkout'] = True
         return redirect('thank_you')
 
     return render(request, 'store/payment.html', {
@@ -153,14 +183,16 @@ def payment_page(request):
         'total': total
     })
 
-# Deals page
+
+# ✅ Today's deals
 def todays_deals(request):
     deal_products = Product.objects.filter(is_deal=True)
     return render(request, 'store/todays_deals.html', {
         'products': deal_products
     })
 
-# Search products
+
+# ✅ Search products
 def search_products(request):
     query = request.GET.get('q', '')
     results = Product.objects.filter(Q(name__icontains=query) | Q(category__name__icontains=query)) if query else []
@@ -169,7 +201,8 @@ def search_products(request):
         'results': results,
     })
 
-# Product detail
+
+# ✅ Product detail
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     reviews = product.reviews.all().order_by('-created_at')
@@ -191,7 +224,8 @@ def product_detail(request, product_id):
         'size_options': size_options
     })
 
-# Buy now
+
+# ✅ Buy now
 @login_required
 @never_cache
 def buy_now(request, product_id):
@@ -202,10 +236,11 @@ def buy_now(request, product_id):
         request.session['buy_now_product_id'] = product.id
         request.session['buy_now_quantity'] = quantity
         request.session['buy_now_size'] = size
-        return redirect('checkout')
+        return redirect('payment')
     return redirect('product_detail', product_id=product_id)
 
-# Signup view
+
+# ✅ Signup
 def signup_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -220,22 +255,34 @@ def signup_view(request):
         form = UserCreationForm()
     return render(request, 'store/signup.html', {'form': form})
 
-# Logout confirmation page
+
+# ✅ Logout-related views
 @login_required
 def logout_confirmation(request):
     return render(request, 'store/logout_confirmation.html')
 
-# Logged out page
 @never_cache
 def logged_out(request):
     return render(request, 'store/logged_out.html')
 
-# Logout view
 def logout_view(request):
     logout(request)
     request.session.flush()
     return redirect('logged_out')
 
 
+# ✅ Profile view
+@login_required
+def profile_view(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
 
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "✅ Profile updated successfully.")
+            return redirect('home')
+    else:
+        form = ProfileForm(instance=profile)
 
+    return render(request, 'store/profile.html', {'form': form, 'profile': profile})

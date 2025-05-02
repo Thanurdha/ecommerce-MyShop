@@ -22,9 +22,11 @@ urlpatterns = [
     path('buy-now/<int:product_id>/', views.buy_now, name='buy_now'),
     path('logout/confirmation/', views.logout_confirmation, name='logout_confirmation'),
     path('logged-out/', views.logged_out, name='logged_out'),
+    path('profile/', views.profile_view, name='profile'),
+    path('wishlist/', views.wishlist, name='wishlist'),
+    path('wishlist/add/<int:product_id>/', views.add_to_wishlist, name='add_to_wishlist'),
+    path('wishlist/remove/<int:product_id>/', views.remove_from_wishlist, name='remove_from_wishlist'),
+
+
 ]
-
-
-
-
 

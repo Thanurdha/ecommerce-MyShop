@@ -5,4 +5,6 @@ class StoreConfig(AppConfig):
     name = 'store'
 
     def ready(self):
-        import store.templatetags.form_tags  # <-- force-load template tag
+        import store.templatetags.form_tags
+        import store.signals
+

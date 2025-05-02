@@ -13,10 +13,9 @@
       <p class="text-muted">{{ product.description }}</p>
       <h4>Rs. {{ product.price }}</h4>
 
-      <!-- Form for Size + Quantity + Actions -->
+      <!-- Form for Buy Now only -->
       <form method="post" action="{% url 'buy_now' product.id %}">
         {% csrf_token %}
-
         {% if size_options %}
           <label class="form-label mt-3">Select Size:</label>
           <select class="form-select mb-3" name="size" required>
@@ -29,18 +28,24 @@
         <label for="qty" class="form-label">Quantity:</label>
         <input type="number" id="qty" name="qty" class="form-control w-25 mb-3" value="1" min="1" required>
 
-        <!-- Action Buttons -->
         <div class="d-flex gap-2">
           <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success btn-lg">Add to Cart</a>
           <button type="submit" class="btn btn-danger btn-lg">Buy Now</button>
         </div>
       </form>
 
+      <!-- Separate Form for Wishlist -->
+      <form action="{% url 'add_to_wishlist' product.id %}" method="post" class="mt-2">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger" title="Add to Wishlist">
+          <i class="fa fa-heart"></i> Add to Wishlist
+        </button>
+      </form>
+
       <hr>
 
       <!-- ⭐ Review Section -->
       <h5 class="mt-4">Submit Your Review</h5>
-
       {% if user.is_authenticated %}
         <form method="post">
           {% csrf_token %}
@@ -60,7 +65,6 @@
       {% else %}
         <p><a href="{% url 'login' %}">Log in</a> to write a review.</p>
       {% endif %}
-
 
       <!-- Existing Reviews -->
       <hr>

@@ -286,3 +286,19 @@ def profile_view(request):
         form = ProfileForm(instance=profile)
 
     return render(request, 'store/profile.html', {'form': form, 'profile': profile})
+
+#wishlist
+from .models import Wishlist, Product
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def add_to_wishlist(request, product_id):
+    product = Product.objects.get(id=product_id)
+    Wishlist.objects.get_or_create(user=request.user, product=product)
+    return redirect('wishlist')
+
+@login_required
+def view_wishlist(request):
+    wishlist_items = Wishlist.objects.filter(user=request.user)
+    return render(request, 'store/wishlist.html', {'wishlist_items': wishlist_items})
+

@@ -295,10 +295,15 @@ from django.contrib.auth.decorators import login_required
 def add_to_wishlist(request, product_id):
     product = Product.objects.get(id=product_id)
     Wishlist.objects.get_or_create(user=request.user, product=product)
-    return redirect('wishlist')
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
 
 @login_required
-def view_wishlist(request):
+def wishlist(request):
     wishlist_items = Wishlist.objects.filter(user=request.user)
     return render(request, 'store/wishlist.html', {'wishlist_items': wishlist_items})
+
+@login_required
+def remove_from_wishlist(request, product_id):
+    Wishlist.objects.filter(user=request.user, product_id=product_id).delete()
+    return redirect('wishlist')
 

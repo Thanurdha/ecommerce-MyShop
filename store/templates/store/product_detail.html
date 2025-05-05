@@ -1,11 +1,81 @@
 {% extends "store/base.html" %}
 {% block content %}
 
+<!-- Arrow button styles and floating icon styles -->
+<style>
+  .arrow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 2;
+    padding: 0 12px;
+    border-radius: 4px;
+  }
+
+  .arrow-left {
+    left: 10px;
+  }
+
+  .arrow-right {
+    right: 10px;
+  }
+
+  .image-container {
+    position: relative;
+  }
+
+  .thumbnail-img.active {
+    border: 2px solid #007bff;
+  }
+
+  .floating-contact {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 1000;
+  }
+
+  .floating-contact a {
+    background-color: white;
+    color: #333;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, background-color 0.3s;
+    text-align: center;
+  }
+
+  .floating-contact a:hover {
+    transform: scale(1.1);
+    background-color: #f0f0f0;
+  }
+
+  .floating-contact a .fa-whatsapp {
+    color: #25D366;
+  }
+
+  .floating-contact a .fa-facebook-messenger {
+    color: #0084FF;
+  }
+
+  .floating-contact a .fa-phone {
+    color: #007bff;
+  }
+</style>
+
 <div class="container mt-5">
   <div class="row">
     <!-- Left Column: Images -->
     <div class="col-md-6">
-      <div class="image-container mb-3 position-relative">
+      <div class="image-container mb-3">
         <button class="arrow-btn arrow-left" id="prevBtn">‹</button>
         <img id="main-product-image" src="{{ product.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ product.name }}">
         <button class="arrow-btn arrow-right" id="nextBtn">›</button>
@@ -186,6 +256,7 @@
   };
 </script>
 {% endblock %}
+
 
 
 

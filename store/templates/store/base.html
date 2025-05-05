@@ -70,6 +70,11 @@
         <a href="{% url 'todays_deals' %}" class="nav-link text-white fw-medium">Deals</a>
       </li>
 
+      <!-- Promotions Tab -->
+      <li class="nav-item me-3">
+        <a href="{% url 'promotions' %}" class="nav-link text-white fw-medium">Promotions</a>  <!-- Added Promotions link -->
+      </li>
+
       {% if user.is_authenticated %}
       <li class="nav-item me-3">
         <a href="{% url 'order_history' %}" class="nav-link text-white"><i class="fas fa-box me-1"></i> Orders</a>

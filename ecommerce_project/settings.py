@@ -4,19 +4,15 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-7&uut+h)t4zmbzf2^o@3fo^y88d1)ee4y_qll+28+7jd1aglmf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# Add 'localhost' and '127.0.0.1' for local development
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -28,8 +24,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    # Temporarily comment out custom middleware if it's not essential
-    # 'store.middleware.DisableBrowserBackMiddleware',  # Disable custom middleware for troubleshooting
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -41,11 +35,14 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'ecommerce_project.urls'
 
+# Templates configuration
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # Update the template directory path to a simpler configuration
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [
+            BASE_DIR / 'templates',                         # Global templates folder (if used)
+            BASE_DIR / 'store' / 'templates' / 'store',     # Direct path to where 'promotions.html' lives
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -61,7 +58,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecommerce_project.wsgi.application'
 
-
 # Database
 DATABASES = {
     'default': {
@@ -69,7 +65,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -87,21 +82,24 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-
 # Static and Media Files
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",             # (optional) main static folder if it exists
+    BASE_DIR / "store" / "static",   # store/static for promo images
+]
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 
 # Authentication settings
 LOGIN_URL = 'login'
@@ -109,4 +107,5 @@ LOGIN_REDIRECT_URL = 'home'
 
 # Default auto field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 

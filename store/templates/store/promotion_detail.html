@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ promo.title }}</h2>
+
+{% if not unlocked %}
+  <form method="get">
+    <input type="hidden" name="unlocked" value="true">
+    <button class="btn btn-primary">🎁 Open Now</button>
+  </form>
+{% else %}
+  <div class="alert alert-success">{{ promo.message }}</div>
+
+  {% if promo.promo_type == 'discount' %}
+    <h4>🔥 {{ promo.discount_percentage }}% OFF on {{ promo.target_category.name }}</h4>
+    <div class="row">
+      {% for product in products %}
+        <div class="col-md-4">
+          <div class="card mb-3">
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p>
+                <del>${{ product.price }}</del>
+                <strong>
+                  ${{
+                    product.price|floatformat:2|add:"-"|add:product.price|mul:promo.discount_percentage|div:100|floatformat:2
+                  }}
+                </strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% elif promo.promo_type == 'gift' %}
+    <h4>🎁 You've received a free gift!</h4>
+    <div class="gift-box">
+      <h5>{{ products.0.name }}</h5>
+      <p>{{ products.0.description }}</p>
+      {% if products.0.image %}
+        <img src="{{ products.0.image.url }}" width="200" />
+      {% endif %}
+    </div>
+
+    <!-- Gift selection form -->
+    <h2>Select your free gift:</h2>
+    <form method="POST">
+      {% csrf_token %}
+      {% for product in products %}
+        <div>
+          <input type="radio" id="gift_{{ product.id }}" name="gift" value="{{ product.name }}">
+          <label for="gift_{{ product.id }}">{{ product.name }}</label>
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-success">Select Gift</button>
+    </form>
+  {% endif %}
+{% endif %}
+
+{% if messages %}
+  <ul>
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% endblock %}
+
+

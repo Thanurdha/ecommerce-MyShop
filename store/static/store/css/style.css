@@ -427,3 +427,19 @@ html {
   animation: fireBoxInset 2s infinite;
   border-radius: 20px;
 }
+/* Existing CSS styles */
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-150px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.float-up {
+  animation: floatUp 5s infinite;
+}

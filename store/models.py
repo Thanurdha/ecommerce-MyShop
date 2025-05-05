@@ -49,13 +49,12 @@ class OrderGroup(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     address = models.TextField(blank=True)
-    status = models.CharField(max_length=20, choices=[
-        ('Pending', 'Pending'),
-        ('Processing', 'Processing'),
-        ('Shipped', 'Shipped'),
-        ('Delivered', 'Delivered'),
-        ('Cancelled', 'Cancelled'),
-    ], default='Pending')
+    status = models.CharField(max_length=20, choices=[('Pending', 'Pending'),
+                                                      ('Processing', 'Processing'),
+                                                      ('Shipped', 'Shipped'),
+                                                      ('Delivered', 'Delivered'),
+                                                      ('Cancelled', 'Cancelled')],
+                              default='Pending')
 
     def total_amount(self):
         return sum(item.subtotal() for item in self.orderitem_set.all())
@@ -111,5 +110,26 @@ class Wishlist(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Wishlist"
 
+
+# New Promotion Model
+class Promotion(models.Model):
+    PROMO_TYPES = [
+        ('discount', 'Discount'),
+        ('gift', 'Gift'),
+    ]
+
+    title = models.CharField(max_length=255)
+    promo_type = models.CharField(max_length=20, choices=PROMO_TYPES)
+    discount_percentage = models.PositiveIntegerField(default=0, blank=True, null=True)
+    message = models.TextField()
+    target_category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
+    free_gift = models.ForeignKey(Product, null=True, blank=True, on_delete=models.SET_NULL)
+    image = models.ImageField(upload_to='promotions/', null=True, blank=True)  # Added image field
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = "Promotions"
 
 

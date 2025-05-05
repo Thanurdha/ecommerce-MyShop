@@ -6,10 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q, Avg
-
 from .models import (
     Product, Category, CartItem, OrderGroup, OrderItem,
-    Review, Profile, Wishlist
+    Review, Profile, Wishlist, Promotion
 )
 from .forms import ProfileForm
 
@@ -308,5 +307,38 @@ def wishlist(request):
 def remove_from_wishlist(request, product_id):
     Wishlist.objects.filter(user=request.user, product_id=product_id).delete()
     return redirect('wishlist')
+
+
+# ✅ Promotions page
+def promotions(request):
+    left_values = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95]
+    duration_values = [8, 10, 12, 14, 9, 11, 13, 15, 10, 12]
+    combined_values = zip(left_values, duration_values)
+
+    promotions = Promotion.objects.all().order_by('-id')
+
+    return render(request, 'promotions.html', {
+        'combined_values': combined_values,
+        'promotions': promotions
+    })
+
+
+# ✅ Promotion detail
+def promotion_detail(request, pk):
+    promo = get_object_or_404(Promotion, pk=pk)
+    unlocked = request.GET.get('unlocked', False)
+
+    if promo.promo_type == 'discount' and promo.target_category:
+        products_in_category = Product.objects.filter(category=promo.target_category)
+    elif promo.promo_type == 'gift' and promo.free_gift:
+        products_in_category = [promo.free_gift]
+    else:
+        products_in_category = []
+
+    return render(request, 'promotion_detail.html', {
+        'promotion': promo,
+        'unlocked': unlocked,
+        'products': products_in_category
+    })
 
 

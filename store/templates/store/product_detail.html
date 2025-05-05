@@ -1,40 +1,52 @@
 {% extends "store/base.html" %}
 {% block content %}
+
 <div class="container mt-5">
   <div class="row">
+    <!-- Left Column: Images -->
     <div class="col-md-6">
-      {% if product.image %}
-        <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+      <div class="image-container mb-3 position-relative">
+        <button class="arrow-btn arrow-left" id="prevBtn">‹</button>
+        <img id="main-product-image" src="{{ product.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ product.name }}">
+        <button class="arrow-btn arrow-right" id="nextBtn">›</button>
+      </div>
+
+      {% if product.additional_images.all %}
+      <div class="d-flex flex-wrap gap-2" id="thumbnails">
+        <img src="{{ product.image.url }}" class="thumbnail-img rounded border" alt="Main View">
+        {% for img in product.additional_images.all %}
+        <img src="{{ img.image.url }}" class="thumbnail-img rounded border" alt="Additional View">
+        {% endfor %}
+      </div>
       {% endif %}
     </div>
 
+    <!-- Right Column: Product Info -->
     <div class="col-md-6">
       <h2>{{ product.name }}</h2>
       <p class="text-muted">{{ product.description }}</p>
       <h4>Rs. {{ product.price }}</h4>
 
-      <!-- Form for Buy Now only -->
       <form method="post" action="{% url 'buy_now' product.id %}">
         {% csrf_token %}
         {% if size_options %}
-          <label class="form-label mt-3">Select Size:</label>
-          <select class="form-select mb-3" name="size" required>
-            {% for size in size_options %}
-              <option value="{{ size }}">{{ size }}</option>
-            {% endfor %}
-          </select>
+        <label class="form-label mt-3">Select Size:</label>
+        <select class="form-select mb-3" name="size" required>
+          {% for size in size_options %}
+          <option value="{{ size }}">{{ size }}</option>
+          {% endfor %}
+        </select>
         {% endif %}
 
         <label for="qty" class="form-label">Quantity:</label>
         <input type="number" id="qty" name="qty" class="form-control w-25 mb-3" value="1" min="1" required>
 
         <div class="d-flex gap-2">
-          <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success btn-lg">Add to Cart</a>
+          <button formaction="{% url 'add_to_cart' product.id %}" type="submit" class="btn btn-success btn-lg">Add to Cart</button>
           <button type="submit" class="btn btn-danger btn-lg">Buy Now</button>
         </div>
       </form>
 
-      <!-- Separate Form for Wishlist -->
       <form action="{% url 'add_to_wishlist' product.id %}" method="post" class="mt-2">
         {% csrf_token %}
         <button type="submit" class="btn btn-outline-danger" title="Add to Wishlist">
@@ -44,41 +56,143 @@
 
       <hr>
 
-      <!-- ⭐ Review Section -->
+      <!-- Review Form -->
       <h5 class="mt-4">Submit Your Review</h5>
       {% if user.is_authenticated %}
-        <form method="post">
-          {% csrf_token %}
-          <label for="rating">Rating:</label>
-          <select class="form-select w-25 mb-2" name="rating" required>
-            <option value="">Choose...</option>
-            {% for i in "12345" %}
-              <option value="{{ i }}">{{ i }} ★</option>
-            {% endfor %}
-          </select>
+      <form method="post" action="">
+        {% csrf_token %}
+        <div class="form-section">
+          <label for="rating" class="form-label">Rating:</label>
+          <span id="rating-stars">★★★☆☆</span>
+          <input type="range" id="ratingSlider" class="form-range w-50 mb-2" min="1" max="5" value="3" required>
+          <input type="hidden" name="rating" id="rating-input" value="3">
+        </div>
 
-          <label for="comment">Comment:</label>
+        <div class="form-section">
+          <label for="comment" class="form-label">Comment:</label>
           <textarea name="comment" class="form-control mb-3" rows="3" placeholder="Write something..."></textarea>
+        </div>
 
-          <button type="submit" class="btn btn-outline-primary">Submit Review</button>
-        </form>
+        <button type="submit" class="btn btn-outline-primary">Submit Review</button>
+      </form>
       {% else %}
-        <p><a href="{% url 'login' %}">Log in</a> to write a review.</p>
+      <p><a href="{% url 'login' %}">Log in</a> to write a review.</p>
       {% endif %}
 
-      <!-- Existing Reviews -->
+      <!-- Display Reviews -->
       <hr>
       <h5 class="mt-4">Customer Reviews</h5>
-      {% for review in reviews %}
-        <div class="border rounded p-3 mb-2">
+      <div class="review-container">
+        {% for review in reviews %}
+        <div class="border rounded p-3 mb-2 bg-white">
           <strong>{{ review.user.username }}</strong> - ⭐ {{ review.rating }}
           <p class="mb-0">{{ review.comment }}</p>
           <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
         </div>
-      {% empty %}
+        {% empty %}
         <p>No reviews yet.</p>
-      {% endfor %}
+        {% endfor %}
+      </div>
     </div>
   </div>
 </div>
+
+<!-- Floating Contact Icons -->
+<div class="floating-contact">
+  <a href="https://wa.me/94771234567" target="_blank" title="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  <a href="https://m.me/yourfacebookpage" target="_blank" title="Messenger">
+    <i class="fab fa-facebook-messenger"></i>
+  </a>
+  <a href="tel:+94771234567" title="Call Us">
+    <i class="fas fa-phone"></i>
+  </a>
+</div>
+
+<script>
+  const mainImg = document.getElementById('main-product-image');
+  const thumbnails = document.querySelectorAll('.thumbnail-img');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const ratingSlider = document.getElementById('ratingSlider');
+  const ratingStars = document.getElementById('rating-stars');
+  const ratingInput = document.getElementById('rating-input');
+
+  const imageSources = Array.from(thumbnails).map(img => img.src);
+  let currentIndex = 0;
+  let autoplayInterval;
+
+  function updateMainImage(index) {
+    mainImg.style.opacity = 0;
+    thumbnails.forEach(img => img.classList.remove('active'));
+    thumbnails[index].classList.add('active');
+    setTimeout(() => {
+      mainImg.src = imageSources[index];
+      mainImg.style.opacity = 1;
+    }, 200);
+  }
+
+  function startAutoplay() {
+    autoplayInterval = setInterval(() => {
+      currentIndex = (currentIndex + 1) % imageSources.length;
+      updateMainImage(currentIndex);
+    }, 4000);
+  }
+
+  function stopAutoplay() {
+    clearInterval(autoplayInterval);
+  }
+
+  thumbnails.forEach((thumb, index) => {
+    thumb.addEventListener('click', () => {
+      stopAutoplay();
+      currentIndex = index;
+      updateMainImage(currentIndex);
+      startAutoplay();
+    });
+  });
+
+  prevBtn.addEventListener('click', () => {
+    stopAutoplay();
+    currentIndex = (currentIndex - 1 + imageSources.length) % imageSources.length;
+    updateMainImage(currentIndex);
+    startAutoplay();
+  });
+
+  nextBtn.addEventListener('click', () => {
+    stopAutoplay();
+    currentIndex = (currentIndex + 1) % imageSources.length;
+    updateMainImage(currentIndex);
+    startAutoplay();
+  });
+
+  ratingSlider.addEventListener('input', () => {
+    const value = parseInt(ratingSlider.value);
+    updateStars(value);
+    ratingInput.value = value;
+  });
+
+  function updateStars(value) {
+    const fullStars = '★'.repeat(value);
+    const emptyStars = '☆'.repeat(5 - value);
+    ratingStars.textContent = fullStars + emptyStars;
+  }
+
+  window.onload = () => {
+    updateStars(parseInt(ratingSlider.value));
+    updateMainImage(currentIndex);
+    startAutoplay();
+  };
+</script>
 {% endblock %}
+
+
+
+
+
+
+
+
+
+

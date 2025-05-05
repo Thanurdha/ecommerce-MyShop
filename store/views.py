@@ -1,21 +1,25 @@
+from collections import defaultdict
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-from django.contrib.auth import logout, login
-from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q, Avg
-from .models import Product, Category, CartItem, OrderGroup, OrderItem, Review, Profile
-from .forms import ProfileForm
-from collections import defaultdict
 
-# ✅ Home page (updated to include categorized_products)
+from .models import (
+    Product, Category, CartItem, OrderGroup, OrderItem,
+    Review, Profile, Wishlist
+)
+from .forms import ProfileForm
+
+
+# ✅ Home page
 def home(request):
     products = Product.objects.select_related('category').all()
     categories = Category.objects.all()
     deals = Product.objects.filter(is_deal=True)[:5]
 
-    # Group products by category
     categorized_products = defaultdict(list)
     for product in products:
         categorized_products[product.category].append(product)
@@ -256,7 +260,7 @@ def signup_view(request):
     return render(request, 'store/signup.html', {'form': form})
 
 
-# ✅ Logout-related views
+# ✅ Logout views
 @login_required
 def logout_confirmation(request):
     return render(request, 'store/logout_confirmation.html')
@@ -287,13 +291,11 @@ def profile_view(request):
 
     return render(request, 'store/profile.html', {'form': form, 'profile': profile})
 
-#wishlist
-from .models import Wishlist, Product
-from django.contrib.auth.decorators import login_required
 
+# ✅ Wishlist views
 @login_required
 def add_to_wishlist(request, product_id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, id=product_id)
     Wishlist.objects.get_or_create(user=request.user, product=product)
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
@@ -306,4 +308,5 @@ def wishlist(request):
 def remove_from_wishlist(request, product_id):
     Wishlist.objects.filter(user=request.user, product_id=product_id).delete()
     return redirect('wishlist')
+
 

@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <title>MyShop</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap 5.3.2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'store/css/style.css' %}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,6 +16,7 @@
       font-size: 16px;
       line-height: 1.6;
       color: #333;
+      padding-top: 70px;
     }
     h1, h2, h3, h4, h5, h6 {
       font-weight: 600;
@@ -32,10 +34,6 @@
       font-size: 0.75rem;
       font-weight: 600;
     }
-  <style>
-    body {
-      padding-top: 70px; /* offset for sticky navbar */
-    }
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.1); }
@@ -45,7 +43,6 @@
       animation: pulse 2s infinite;
     }
   </style>
-
   {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -53,12 +50,10 @@
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg shadow-sm sticky-top" style="background-color: var(--text-color);">
   <div class="container-fluid px-4">
-    <!-- Logo/Brand -->
     <a class="navbar-brand fw-bold fs-4 text-white" href="{% url 'home' %}">
       <i class="fas fa-store-alt me-2"></i> TrendCart
     </a>
 
-    <!-- Search Bar -->
     <form class="d-flex mx-auto w-50" role="search" method="get" action="{% url 'search' %}">
       <div class="input-group">
         <input type="search" name="q" class="form-control rounded-start-pill" placeholder="Search products..." aria-label="Search">
@@ -68,20 +63,16 @@
       </div>
     </form>
 
-    <!-- Right Links & Icons -->
     <ul class="navbar-nav ms-auto align-items-center">
-      <!-- Today's Deals -->
       <li class="nav-item me-3">
         <a href="{% url 'todays_deals' %}" class="nav-link text-white fw-medium">Deals</a>
       </li>
 
-      <!-- Orders -->
       {% if user.is_authenticated %}
       <li class="nav-item me-3">
         <a href="{% url 'order_history' %}" class="nav-link text-white"><i class="fas fa-box me-1"></i> Orders</a>
       </li>
 
-      <!-- Cart Icon -->
       <li class="nav-item me-3 position-relative">
         <a href="{% url 'view_cart' %}" class="nav-link text-white">
           <i class="fas fa-shopping-cart"></i>
@@ -93,14 +84,17 @@
         </a>
       </li>
 
-      <!-- Wish List Icon -->
-      <li class="nav-item me-3">
+      <li class="nav-item me-3 position-relative">
         <a class="nav-link text-white" href="{% url 'wishlist' %}">
           <i class="fa fa-heart"></i>
+          {% if wishlist_item_count > 0 %}
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ wishlist_item_count }}
+          </span>
+          {% endif %}
         </a>
       </li>
 
-      <!-- Profile Icon -->
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="fas fa-user-circle me-1"></i> {{ user.username }}
@@ -125,7 +119,6 @@
   </div>
 </nav>
 
-
 <!-- Flash Messages -->
 <div class="container mt-3">
   {% if messages %}
@@ -138,9 +131,39 @@
   {% endif %}
 </div>
 
-<!-- Page-specific content -->
+<!-- Page Content -->
 <div class="container content-container">
-  {% block content %}{% endblock %}
+  {% block content %}
+
+  <!-- Carousel -->
+  <div id="homeCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner rounded shadow">
+      <div class="carousel-item active">
+        <img src="{% static 'store/images/banner1.jpg' %}" class="d-block w-100" alt="Banner 1">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'store/images/banner2.jpg' %}" class="d-block w-100" alt="Banner 2">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'store/images/banner3.jpg' %}" class="d-block w-100" alt="Banner 3">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+
+  {% endblock %}
 </div>
 
 <!-- Footer -->
@@ -204,15 +227,19 @@
       </div>
       <div class="col-md-6 text-md-end">
         <p>TrendCart Group: TrendCart Global, TrendPay, TrendMall</p>
-        <p>Languages: English, Sinhala, Tamil, Arabic, Hindi</p>
+        <p>Languages: English, Sinhala, Tamil, Hindi, Spanish</p>
       </div>
     </div>
   </div>
 </footer>
 
+<!-- Bootstrap 5.3.2 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_scripts %}{% endblock %}
 </body>
 </html>
+
+
+
+

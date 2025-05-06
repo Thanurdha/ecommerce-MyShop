@@ -12,7 +12,7 @@ from .models import (
 )
 from .forms import ProfileForm
 
-# ✅ Home page
+#  Home page
 def home(request):
     products = Product.objects.select_related('category').all()
     categories = Category.objects.all()
@@ -29,7 +29,7 @@ def home(request):
         'categorized_products': categorized_products,
     })
 
-# ✅ Products by category
+#  Products by category
 def category_products(request, category_id):
     selected_category = Category.objects.get(id=category_id)
     products = Product.objects.filter(category=selected_category).annotate(avg_rating=Avg('reviews__rating'))
@@ -38,7 +38,7 @@ def category_products(request, category_id):
         'products': products
     })
 
-# ✅ Add to cart
+#  Add to cart
 @login_required
 @never_cache
 def add_to_cart(request, product_id):
@@ -50,7 +50,7 @@ def add_to_cart(request, product_id):
     messages.success(request, f"✅ {product.name} added to your cart!")
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
-# ✅ View cart
+#  View cart
 @login_required
 @never_cache
 def view_cart(request):
@@ -61,7 +61,7 @@ def view_cart(request):
         'total': total
     })
 
-# ✅ Remove from cart
+#  Remove from cart
 @login_required
 @never_cache
 def remove_from_cart(request, product_id):
@@ -70,7 +70,7 @@ def remove_from_cart(request, product_id):
         cart_item.delete()
     return redirect('view_cart')
 
-# ✅ Checkout
+#  Checkout
 @login_required
 @never_cache
 def checkout(request):
@@ -94,7 +94,7 @@ def checkout(request):
         'total': total
     })
 
-# ✅ Thank you page
+#  Thank you page
 @login_required
 @never_cache
 def thank_you(request):
@@ -109,7 +109,7 @@ def thank_you(request):
         'total': total
     })
 
-# ✅ Order history
+#  Order history
 @login_required
 @never_cache
 def order_history(request):
@@ -118,7 +118,7 @@ def order_history(request):
         'orders': orders
     })
 
-# ✅ About page
+#  About page
 def about(request):
     return render(request, 'store/about.html')
 
@@ -190,14 +190,20 @@ def payment(request):
     return redirect('checkout')
 
 
-# ✅ Today's deals
+#  Today's deals
+from decimal import Decimal  # Add this import at the top
+
 def todays_deals(request):
     deal_products = Product.objects.filter(is_deal=True)
+    for product in deal_products:
+        product.original_price = product.price
+        product.deal_price = (product.price * Decimal('0.7')).quantize(Decimal('0.01'))  # 30% discount
     return render(request, 'store/todays_deals.html', {
         'products': deal_products
     })
 
-# ✅ Search products
+
+#  Search products
 def search_products(request):
     query = request.GET.get('q', '')
     results = Product.objects.filter(Q(name__icontains=query) | Q(category__name__icontains=query)) if query else []
@@ -206,7 +212,7 @@ def search_products(request):
         'results': results,
     })
 
-# ✅ Product detail
+#  Product detail
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     reviews = product.reviews.all().order_by('-created_at')
@@ -228,7 +234,7 @@ def product_detail(request, product_id):
         'size_options': size_options
     })
 
-# ✅ Buy now
+#  Buy now
 @login_required
 @never_cache
 def buy_now(request, product_id):
@@ -242,7 +248,7 @@ def buy_now(request, product_id):
         return redirect('payment')
     return redirect('product_detail', product_id=product_id)
 
-# ✅ Signup
+#  Signup
 def signup_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -257,7 +263,7 @@ def signup_view(request):
         form = UserCreationForm()
     return render(request, 'store/signup.html', {'form': form})
 
-# ✅ Logout views
+#  Logout views
 @login_required
 def logout_confirmation(request):
     return render(request, 'store/logout_confirmation.html')
@@ -271,7 +277,7 @@ def logout_view(request):
     request.session.flush()
     return redirect('logged_out')
 
-# ✅ Profile view
+#  Profile view
 @login_required
 def profile_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
@@ -287,7 +293,7 @@ def profile_view(request):
 
     return render(request, 'store/profile.html', {'form': form, 'profile': profile})
 
-# ✅ Wishlist views
+#  Wishlist views
 @login_required
 def add_to_wishlist(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -304,7 +310,7 @@ def remove_from_wishlist(request, product_id):
     Wishlist.objects.filter(user=request.user, product_id=product_id).delete()
     return redirect('wishlist')
 
-# ✅ Promotions page (protected by login)
+#  Promotions page (protected by login)
 @login_required
 def promotions(request):
     left_values = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95]

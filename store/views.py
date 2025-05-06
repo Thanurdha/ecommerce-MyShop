@@ -1,3 +1,4 @@
+
 from collections import defaultdict
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
@@ -29,11 +30,10 @@ def home(request):
         'categorized_products': categorized_products,
     })
 
-<<<<<<< HEAD
 #  Products by category
-=======
+
 # ✅ Products by category (with sorting + filtering)
->>>>>>> 52bed887a4e135d47fcc54307fdb3bc735e2e026
+
 def category_products(request, category_id):
     selected_category = get_object_or_404(Category, id=category_id)
     products = Product.objects.filter(category=selected_category).annotate(avg_rating=Avg('reviews__rating'))
@@ -210,14 +210,13 @@ def payment(request):
 
     return redirect('checkout')
 
-<<<<<<< HEAD
 
 #  Today's deals
 from decimal import Decimal  # Add this import at the top
 
-=======
+
 # ✅ Today's deals
->>>>>>> 52bed887a4e135d47fcc54307fdb3bc735e2e026
+
 def todays_deals(request):
     deal_products = Product.objects.filter(is_deal=True)
     for product in deal_products:
@@ -335,11 +334,11 @@ def remove_from_wishlist(request, product_id):
     Wishlist.objects.filter(user=request.user, product_id=product_id).delete()
     return redirect('wishlist')
 
-<<<<<<< HEAD
+
 #  Promotions page (protected by login)
-=======
+
 # ✅ Promotions
->>>>>>> 52bed887a4e135d47fcc54307fdb3bc735e2e026
+
 @login_required
 def promotions(request):
     left_values = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95]

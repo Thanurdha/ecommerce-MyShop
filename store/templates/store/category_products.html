@@ -1,44 +1,75 @@
-{% extends "store/base.html" %}
+{% extends 'store/base.html' %}
+{% load static %}
+
 {% block content %}
-<div class="container mt-4">
-  <h2>{{ category.name }}</h2>
-  <div class="row">
-    {% for product in products %}
-      <div class="col-md-4 mb-4">
-        <div class="card h-100">
-          {% if product.image %}
-            <!-- Wrap image with link -->
-            <a href="{% url 'product_detail' product.id %}">
-              <img src="{{ product.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
-            </a>
-          {% endif %}
-          <div class="card-body">
-            <!-- Wrap product name with link -->
-            <a href="{% url 'product_detail' product.id %}" class="text-decoration-none text-dark">
-              <h5 class="card-title mb-1">{{ product.name }}</h5>
-            </a>
+<div class="container my-5">
+  <h2 class="mb-4">{{ category.name }}</h2>
 
-            {% if product.avg_rating %}
-              <p class="text-warning mb-2" style="font-size: 0.9rem;">
-               ⭐ {{ product.avg_rating|floatformat:1 }}/5
-              </p>
-            {% else %}
-              <p class="text-muted" style="font-size: 0.9rem;">No ratings yet</p>
+  <!-- Sorting + Filters Form -->
+  <form method="get" class="row g-3 align-items-end mb-4">
+
+    <!-- Sort Dropdown -->
+    <div class="col-md-3">
+      <label for="sort" class="form-label fw-semibold">Sort by</label>
+      <select name="sort" id="sort" class="form-select" onchange="this.form.submit()">
+        <option value="">Default</option>
+        <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+        <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+        <option value="name_asc" {% if request.GET.sort == 'name_asc' %}selected{% endif %}>Name: A to Z</option>
+        <option value="name_desc" {% if request.GET.sort == 'name_desc' %}selected{% endif %}>Name: Z to A</option>
+      </select>
+    </div>
+
+    <!-- Min Price -->
+    <div class="col-md-2">
+      <label class="form-label fw-semibold">Min Price</label>
+      <input type="number" class="form-control" name="min_price" value="{{ request.GET.min_price }}">
+    </div>
+
+    <!-- Max Price -->
+    <div class="col-md-2">
+      <label class="form-label fw-semibold">Max Price</label>
+      <input type="number" class="form-control" name="max_price" value="{{ request.GET.max_price }}">
+    </div>
+
+    <!-- Min Rating -->
+    <div class="col-md-2">
+      <label class="form-label fw-semibold">Min Rating</label>
+      <select name="min_rating" class="form-select">
+        <option value="">Any</option>
+        {% for i in "12345" %}
+          <option value="{{ i }}" {% if request.GET.min_rating == i %}selected{% endif %}>{{ i }}★ & up</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Filter Button -->
+    <div class="col-md-3">
+      <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+    </div>
+  </form>
+
+  <!-- Product Grid -->
+  {% if products %}
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
+      {% for product in products %}
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 180px; object-fit: cover;">
             {% endif %}
-
-            <p class="card-text">{{ product.description|truncatewords:10 }}</p>
-            <p class="fw-bold">Rs. {{ product.price }}</p>
-            <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-primary">Add to Cart</a>
-            <form action="{% url 'add_to_wishlist' product.id %}" method="post" class="d-inline">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-outline-danger p-1" title="Add to Wishlist" style="border-radius: 50%;">
-                <i class="fa fa-heart"></i>
-              </button>
-            </form>
+            <div class="card-body">
+              <h6 class="card-title fw-semibold">{{ product.name }}</h6>
+              <p class="text-muted small mb-1">{{ product.description|truncatewords:15 }}</p>
+              <p class="fw-bold text-success mb-2">Rs. {{ product.price }}</p>
+              <a href="{% url 'add_to_cart' product.id %}" class="btn btn-outline-primary btn-sm w-100">Add to Cart</a>
+            </div>
           </div>
         </div>
-      </div>
-    {% endfor %}
-  </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="mt-4 text-muted">No products available in this category.</p>
+  {% endif %}
 </div>
 {% endblock %}

@@ -5,122 +5,154 @@
   <meta charset="UTF-8">
   <title>MyShop</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Bootstrap 5.3.2 CSS -->
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'store/css/style.css' %}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
   <style>
+    :root {
+      --primary-color: #f9c846;
+      --text-color: #141414;
+    }
+
     body {
       font-family: 'Poppins', sans-serif;
       font-size: 16px;
       line-height: 1.6;
       color: #333;
-      padding-top: 70px;
+      margin: 0;
+      padding: 0;
     }
+
     h1, h2, h3, h4, h5, h6 {
       font-weight: 600;
       margin-bottom: 0.75rem;
     }
-    .navbar-brand, .nav-link, .btn {
+
+    .navbar {
+      height: 64px;
+      background-color: var(--text-color) !important;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-brand i {
+      margin-right: 6px;
+    }
+
+    .navbar .nav-link,
+    .navbar .dropdown-toggle {
+      color: #fff !important;
+      padding: 0.5rem 0.75rem;
+      transition: color 0.3s ease;
       font-weight: 500;
     }
-    .btn {
-      font-size: 0.95rem;
-      padding: 0.5rem 1.25rem;
-      border-radius: 50px;
+
+    .navbar .nav-link:hover,
+    .navbar .dropdown-toggle:hover {
+      color: var(--primary-color) !important;
     }
+
+    .input-group .form-control {
+      height: 38px;
+      font-size: 0.9rem;
+      border-radius: 30px 0 0 30px;
+    }
+
+    .input-group .btn {
+      height: 38px;
+      border-radius: 0 30px 30px 0;
+      background-color: var(--primary-color);
+      color: #000;
+    }
+
+    .navbar-nav .nav-item {
+      margin-right: 10px;
+    }
+
     .badge {
-      font-size: 0.75rem;
-      font-weight: 600;
+      font-size: 0.7rem;
+      padding: 4px 6px;
     }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-    .deals-btn {
-      animation: pulse 2s infinite;
+
+    .content-container {
+      padding-top: 30px;
     }
   </style>
+
   {% block extra_head %}{% endblock %}
 </head>
 <body>
 
 <!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg shadow-sm sticky-top" style="background-color: var(--text-color);">
+<nav class="navbar navbar-expand-lg shadow-sm sticky-top">
   <div class="container-fluid px-4">
-    <a class="navbar-brand fw-bold fs-4 text-white" href="{% url 'home' %}">
-      <i class="fas fa-store-alt me-2"></i> TrendCart
+    <a class="navbar-brand text-white" href="{% url 'home' %}">
+      <i class="fas fa-store-alt"></i> TrendCart
     </a>
 
     <form class="d-flex mx-auto w-50" role="search" method="get" action="{% url 'search' %}">
       <div class="input-group">
-        <input type="search" name="q" class="form-control rounded-start-pill" placeholder="Search products..." aria-label="Search">
-        <button class="btn" type="submit" style="background-color: var(--secondary-color); border-top-right-radius: 50px; border-bottom-right-radius: 50px;">
+        <input type="search" name="q" class="form-control" placeholder="Search products..." aria-label="Search">
+        <button class="btn" type="submit">
           <i class="fas fa-search"></i>
         </button>
       </div>
     </form>
 
     <ul class="navbar-nav ms-auto align-items-center">
-      <li class="nav-item me-3">
-        <a href="{% url 'todays_deals' %}" class="nav-link text-white fw-medium">Deals</a>
-      </li>
-
-      <!-- Promotions Tab -->
-      <li class="nav-item me-3">
-        <a href="{% url 'promotions' %}" class="nav-link text-white fw-medium">Promotions</a>  <!-- Added Promotions link -->
-      </li>
+      <li class="nav-item"><a href="{% url 'todays_deals' %}" class="nav-link">Deals</a></li>
+      <li class="nav-item"><a href="{% url 'promotions' %}" class="nav-link">Promotions</a></li>
 
       {% if user.is_authenticated %}
-      <li class="nav-item me-3">
-        <a href="{% url 'order_history' %}" class="nav-link text-white"><i class="fas fa-box me-1"></i> Orders</a>
-      </li>
+        <li class="nav-item position-relative">
+          <a href="{% url 'view_cart' %}" class="nav-link">
+            <i class="fas fa-shopping-cart"></i>
+            {% if cart_item_count > 0 %}
+              <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">{{ cart_item_count }}</span>
+            {% endif %}
+          </a>
+        </li>
 
-      <li class="nav-item me-3 position-relative">
-        <a href="{% url 'view_cart' %}" class="nav-link text-white">
-          <i class="fas fa-shopping-cart"></i>
-          {% if cart_item_count > 0 %}
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {{ cart_item_count }}
-          </span>
-          {% endif %}
-        </a>
-      </li>
+        <li class="nav-item position-relative">
+          <a href="{% url 'wishlist' %}" class="nav-link">
+            <i class="fa fa-heart"></i>
+            {% if wishlist_item_count > 0 %}
+              <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">{{ wishlist_item_count }}</span>
+            {% endif %}
+          </a>
+        </li>
 
-      <li class="nav-item me-3 position-relative">
-        <a class="nav-link text-white" href="{% url 'wishlist' %}">
-          <i class="fa fa-heart"></i>
-          {% if wishlist_item_count > 0 %}
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {{ wishlist_item_count }}
-          </span>
-          {% endif %}
-        </a>
-      </li>
-
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="fas fa-user-circle me-1"></i> {{ user.username }}
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li>
-            <form method="post" action="{% url 'logout' %}">{% csrf_token %}
-              <button type="submit" class="dropdown-item">Logout</button>
-            </form>
-          </li>
-        </ul>
-      </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'order_history' %}"><i class="fas fa-box me-1"></i> My Orders</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+                <button type="submit" class="dropdown-item">Logout</button>
+              </form>
+            </li>
+          </ul>
+        </li>
       {% else %}
-      <li class="nav-item me-2">
-        <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Login</a>
-        <a href="{% url 'signup' %}" class="btn btn-warning btn-sm">Sign Up</a>
-      </li>
+        <li class="nav-item">
+          <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Login</a>
+          <a href="{% url 'signup' %}" class="btn btn-warning btn-sm">Sign Up</a>
+        </li>
       {% endif %}
     </ul>
   </div>
@@ -132,7 +164,7 @@
     {% for message in messages %}
       <div class="alert alert-info alert-dismissible fade show" role="alert">
         {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     {% endfor %}
   {% endif %}
@@ -141,35 +173,6 @@
 <!-- Page Content -->
 <div class="container content-container">
   {% block content %}
-
-  <!-- Carousel -->
-  <div id="homeCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
-    <div class="carousel-indicators">
-      <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-      <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-      <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-    </div>
-    <div class="carousel-inner rounded shadow">
-      <div class="carousel-item active">
-        <img src="{% static 'store/images/banner1.jpg' %}" class="d-block w-100" alt="Banner 1">
-      </div>
-      <div class="carousel-item">
-        <img src="{% static 'store/images/banner2.jpg' %}" class="d-block w-100" alt="Banner 2">
-      </div>
-      <div class="carousel-item">
-        <img src="{% static 'store/images/banner3.jpg' %}" class="d-block w-100" alt="Banner 3">
-      </div>
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
-  </div>
-
   {% endblock %}
 </div>
 
@@ -240,13 +243,8 @@
   </div>
 </footer>
 
-<!-- Bootstrap 5.3.2 JS Bundle -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 {% block extra_scripts %}{% endblock %}
 </body>
 </html>
-
-
-
-

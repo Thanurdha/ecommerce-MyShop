@@ -1,21 +1,23 @@
+from collections import defaultdict
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-from django.contrib.auth import logout, login
-from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q, Avg
-from .models import Product, Category, CartItem, OrderGroup, OrderItem, Review, Profile
+from .models import (
+    Product, Category, CartItem, OrderGroup, OrderItem,
+    Review, Profile, Wishlist, Promotion
+)
 from .forms import ProfileForm
-from collections import defaultdict
 
-# ✅ Home page (updated to include categorized_products)
+# ✅ Home page
 def home(request):
     products = Product.objects.select_related('category').all()
     categories = Category.objects.all()
     deals = Product.objects.filter(is_deal=True)[:5]
 
-    # Group products by category
     categorized_products = defaultdict(list)
     for product in products:
         categorized_products[product.category].append(product)
@@ -27,7 +29,6 @@ def home(request):
         'categorized_products': categorized_products,
     })
 
-
 # ✅ Products by category
 def category_products(request, category_id):
     selected_category = Category.objects.get(id=category_id)
@@ -36,7 +37,6 @@ def category_products(request, category_id):
         'category': selected_category,
         'products': products
     })
-
 
 # ✅ Add to cart
 @login_required
@@ -50,7 +50,6 @@ def add_to_cart(request, product_id):
     messages.success(request, f"✅ {product.name} added to your cart!")
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
-
 # ✅ View cart
 @login_required
 @never_cache
@@ -62,7 +61,6 @@ def view_cart(request):
         'total': total
     })
 
-
 # ✅ Remove from cart
 @login_required
 @never_cache
@@ -71,7 +69,6 @@ def remove_from_cart(request, product_id):
     if cart_item:
         cart_item.delete()
     return redirect('view_cart')
-
 
 # ✅ Checkout
 @login_required
@@ -97,7 +94,6 @@ def checkout(request):
         'total': total
     })
 
-
 # ✅ Thank you page
 @login_required
 @never_cache
@@ -113,7 +109,6 @@ def thank_you(request):
         'total': total
     })
 
-
 # ✅ Order history
 @login_required
 @never_cache
@@ -123,11 +118,9 @@ def order_history(request):
         'orders': orders
     })
 
-
 # ✅ About page
 def about(request):
     return render(request, 'store/about.html')
-
 
 # ✅ Payment page
 @login_required
@@ -183,14 +176,12 @@ def payment_page(request):
         'total': total
     })
 
-
 # ✅ Today's deals
 def todays_deals(request):
     deal_products = Product.objects.filter(is_deal=True)
     return render(request, 'store/todays_deals.html', {
         'products': deal_products
     })
-
 
 # ✅ Search products
 def search_products(request):
@@ -200,7 +191,6 @@ def search_products(request):
         'query': query,
         'results': results,
     })
-
 
 # ✅ Product detail
 def product_detail(request, product_id):
@@ -224,7 +214,6 @@ def product_detail(request, product_id):
         'size_options': size_options
     })
 
-
 # ✅ Buy now
 @login_required
 @never_cache
@@ -238,7 +227,6 @@ def buy_now(request, product_id):
         request.session['buy_now_size'] = size
         return redirect('payment')
     return redirect('product_detail', product_id=product_id)
-
 
 # ✅ Signup
 def signup_view(request):
@@ -255,8 +243,7 @@ def signup_view(request):
         form = UserCreationForm()
     return render(request, 'store/signup.html', {'form': form})
 
-
-# ✅ Logout-related views
+# ✅ Logout views
 @login_required
 def logout_confirmation(request):
     return render(request, 'store/logout_confirmation.html')
@@ -269,7 +256,6 @@ def logout_view(request):
     logout(request)
     request.session.flush()
     return redirect('logged_out')
-
 
 # ✅ Profile view
 @login_required
@@ -287,13 +273,10 @@ def profile_view(request):
 
     return render(request, 'store/profile.html', {'form': form, 'profile': profile})
 
-#wishlist
-from .models import Wishlist, Product
-from django.contrib.auth.decorators import login_required
-
+# ✅ Wishlist views
 @login_required
 def add_to_wishlist(request, product_id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, id=product_id)
     Wishlist.objects.get_or_create(user=request.user, product=product)
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
@@ -306,4 +289,18 @@ def wishlist(request):
 def remove_from_wishlist(request, product_id):
     Wishlist.objects.filter(user=request.user, product_id=product_id).delete()
     return redirect('wishlist')
+
+# ✅ Promotions page (protected by login)
+@login_required
+def promotions(request):
+    left_values = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95]
+    duration_values = [8, 10, 12, 14, 9, 11, 13, 15, 10, 12]
+    combined_values = zip(left_values, duration_values)
+
+    promotions = Promotion.objects.all().order_by('-id')
+
+    return render(request, 'promotions.html', {
+        'combined_values': combined_values,
+        'promotions': promotions
+    })
 

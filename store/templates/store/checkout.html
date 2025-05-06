@@ -42,10 +42,13 @@
     <p>Your cart is empty.</p>
   {% endif %}
 
-  <!-- ✅ Confirm button -->
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-primary mt-3">Confirm Order</button>
-  </form>
+  <!-- ✅ Proceed to Payment via POST -->
+  {% if cart_items or buy_now %}
+    <form method="post" action="{% url 'payment' %}">
+      {% csrf_token %}
+      <input type="hidden" name="from_checkout" value="1">
+      <button type="submit" class="btn btn-warning mt-3">Proceed to Payment</button>
+    </form>
+  {% endif %}
 </div>
 {% endblock %}

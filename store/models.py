@@ -110,7 +110,6 @@ class Wishlist(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Wishlist"
 
-
 # New Promotion Model
 class Promotion(models.Model):
     PROMO_TYPES = [
@@ -131,5 +130,3 @@ class Promotion(models.Model):
 
     class Meta:
         verbose_name_plural = "Promotions"
-
-

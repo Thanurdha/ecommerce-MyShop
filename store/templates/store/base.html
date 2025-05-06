@@ -113,6 +113,7 @@
     <ul class="navbar-nav ms-auto align-items-center">
       <li class="nav-item"><a href="{% url 'todays_deals' %}" class="nav-link">Deals</a></li>
       <li class="nav-item"><a href="{% url 'promotions' %}" class="nav-link">Promotions</a></li>
+      <li class="nav-item"><a href="{% url 'track_order' %}" class="nav-link">Track Order</a></li>
 
       {% if user.is_authenticated %}
         <li class="nav-item position-relative">

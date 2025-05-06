@@ -25,6 +25,13 @@ class ProductAdmin(admin.ModelAdmin):
 # Register the Product model with the custom admin class
 admin.site.register(Product, ProductAdmin)
 
+from django.contrib import admin
+from .models import OrderGroup
 
-
+@admin.register(OrderGroup)
+class OrderGroupAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'created_at', 'status')
+    list_filter = ('status', 'created_at')
+    search_fields = ('user__username', 'id')
+    ordering = ('-created_at',)
 

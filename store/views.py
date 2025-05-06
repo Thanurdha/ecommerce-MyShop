@@ -1,4 +1,3 @@
-
 from collections import defaultdict
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
@@ -12,6 +11,9 @@ from .models import (
     Review, Profile, Wishlist, Promotion
 )
 from .forms import ProfileForm
+from django.shortcuts import render, get_object_or_404
+from .models import OrderGroup
+
 
 #  Home page
 def home(request):
@@ -31,36 +33,9 @@ def home(request):
     })
 
 #  Products by category
-
-# ✅ Products by category (with sorting + filtering)
-
 def category_products(request, category_id):
-    selected_category = get_object_or_404(Category, id=category_id)
+    selected_category = Category.objects.get(id=category_id)
     products = Product.objects.filter(category=selected_category).annotate(avg_rating=Avg('reviews__rating'))
-
-    # Filtering
-    min_price = request.GET.get('min_price')
-    max_price = request.GET.get('max_price')
-    min_rating = request.GET.get('min_rating')
-
-    if min_price:
-        products = products.filter(price__gte=min_price)
-    if max_price:
-        products = products.filter(price__lte=max_price)
-    if min_rating:
-        products = products.filter(avg_rating__gte=min_rating)
-
-    # Sorting
-    sort = request.GET.get('sort')
-    if sort == 'price_asc':
-        products = products.order_by('price')
-    elif sort == 'price_desc':
-        products = products.order_by('-price')
-    elif sort == 'name_asc':
-        products = products.order_by('name')
-    elif sort == 'name_desc':
-        products = products.order_by('-name')
-
     return render(request, 'store/category_products.html', {
         'category': selected_category,
         'products': products
@@ -150,10 +125,11 @@ def order_history(request):
 def about(request):
     return render(request, 'store/about.html')
 
-# ✅ Payment
+#Payment
 @login_required
 @never_cache
 def payment(request):
+    # Buy Now case
     buy_now_product_id = request.session.get('buy_now_product_id')
     buy_now_quantity = int(request.session.get('buy_now_quantity', 1))
 
@@ -162,6 +138,7 @@ def payment(request):
         subtotal = product.price * buy_now_quantity
 
         if request.method == 'POST' and not request.POST.get('from_checkout'):
+            # Process Buy Now payment
             order_group = OrderGroup.objects.create(user=request.user)
             OrderItem.objects.create(
                 order_group=order_group,
@@ -174,6 +151,7 @@ def payment(request):
             del request.session['buy_now_quantity']
             return redirect('thank_you')
 
+        # Show payment page for Buy Now
         return render(request, 'store/payment.html', {
             'buy_now': True,
             'product': product,
@@ -181,6 +159,7 @@ def payment(request):
             'total': subtotal
         })
 
+    # Cart checkout case
     cart_items = CartItem.objects.filter(user=request.user)
     if not cart_items:
         return redirect('view_cart')
@@ -189,12 +168,14 @@ def payment(request):
 
     if request.method == 'POST':
         if request.POST.get('from_checkout'):
+            # Came from checkout → show payment form
             return render(request, 'store/payment.html', {
                 'buy_now': False,
                 'cart_items': cart_items,
                 'total': total
             })
         else:
+            # Final POST: place the order
             order_group = OrderGroup.objects.create(user=request.user)
             for item in cart_items:
                 OrderItem.objects.create(
@@ -208,14 +189,12 @@ def payment(request):
             cart_items.delete()
             return redirect('thank_you')
 
+    # GET request fallback (rare)
     return redirect('checkout')
 
 
 #  Today's deals
 from decimal import Decimal  # Add this import at the top
-
-
-# ✅ Today's deals
 
 def todays_deals(request):
     deal_products = Product.objects.filter(is_deal=True)
@@ -334,27 +313,19 @@ def remove_from_wishlist(request, product_id):
     Wishlist.objects.filter(user=request.user, product_id=product_id).delete()
     return redirect('wishlist')
 
-
 #  Promotions page (protected by login)
-
-# ✅ Promotions
-
 @login_required
 def promotions(request):
     left_values = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95]
     duration_values = [8, 10, 12, 14, 9, 11, 13, 15, 10, 12]
     combined_values = zip(left_values, duration_values)
+
     promotions = Promotion.objects.all().order_by('-id')
 
     return render(request, 'promotions.html', {
         'combined_values': combined_values,
         'promotions': promotions
     })
-
-
-from django.contrib import messages
-from django.shortcuts import render, get_object_or_404
-from .models import OrderGroup
 
 @login_required
 def track_order(request):
@@ -371,3 +342,5 @@ def track_order(request):
         'order': order,
         'searched': searched
     })
+
+
